@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.base import Model
+from problem_app.models import Tag
 
 from user_app.enums import (MenteeListPrivacy, MentorListPrivacy,
                             SubmissionPrivacy)
@@ -63,3 +63,12 @@ class MentorshipRequest(models.Model):
     def __str__(self):
         return self.request_user.username + ' to ' + self.target_user.username
 
+
+class UserStatistic(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    score = models.IntegerField(default=0)
+    count = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.user.username
