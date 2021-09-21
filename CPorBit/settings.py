@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'user_app',
     'problem_app',
     'suggestion_app',
+    'gamification_app',
 
     # Django rest framework
     'rest_framework',
