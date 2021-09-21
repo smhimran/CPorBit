@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     # project apps
     'user_app',
     'problem_app',
+    'suggestion_app',
 
     # Django rest framework
     'rest_framework',
