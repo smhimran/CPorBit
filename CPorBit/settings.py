@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # project apps
-    'user_app',
+    'user_app.apps.UserAppConfig',
     'problem_app',
     'suggestion_app',
     'gamification_app',
@@ -140,6 +140,15 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Djoser settings
+DJOSER = {
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': 'username/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
+    'SERIALIZERS': {},
+}
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
@@ -156,3 +165,18 @@ STATIC_URL = env.str('STATIC_URL', default='static/')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Email settings
+EMAIL_BACKEND = env.str('EMAIL_BACKEND')
+EMAIL_HOST = env.str('EMAIL_HOST')
+EMAIL_HOST_USER = env.str('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD') 
+EMAIL_PORT = env.int('EMAIL_PORT')
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS')
+DEFAULT_FROM_EMAIL = env.str('DEFAULT_FROM_EMAIL')
+
+# Domain and site name
+
+## Frontend domain (used for mails)
+DOMAIN = env.str('DOMAIN')
+SITE_NAME = env.str('SITE_NAME')
