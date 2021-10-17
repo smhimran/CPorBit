@@ -10,4 +10,22 @@
 .register-page {
   background: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
     url("./images/cporbit-bg.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.login-bg {
+  background-image: url("./images/undraw_Dev_focus_re_6iwt.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.login-page {
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+    url("./images/cporbit-bg.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }

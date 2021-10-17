@@ -1,13 +1,16 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
+import { AlertContext } from "../contexts/AlertContext";
 
 function ActivateAccount() {
   const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
 
+  // url params
   const { uid, token } = useParams();
+
+  // Contexts
+  const displayAlert = useContext(AlertContext);
 
   useEffect(() => {
     setIsLoading(true);
@@ -21,23 +24,15 @@ function ActivateAccount() {
       .post("/auth/users/activation/", data)
       .then((response) => {
         setIsLoading(false);
-        setIsSuccess(true);
-        setShowAlert(true);
 
-        setTimeout(() => {
-          setShowAlert(false);
-          setIsSuccess(false);
-        }, 3000);
+        displayAlert("Your account was activated!", true);
       })
       .catch((error) => {
         setIsLoading(false);
-        setIsSuccess(false);
-        setShowAlert(true);
 
-        setTimeout(() => {
-          setShowAlert(false);
-        }, 3000);
+        displayAlert("Some error occured! Try again later...", false);
       });
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -52,7 +47,7 @@ function ActivateAccount() {
         </div>
       )}
 
-      {/* Alerts */}
+      {/* Alerts
 
       {showAlert && (
         <>
@@ -108,7 +103,7 @@ function ActivateAccount() {
             </div>
           )}
         </>
-      )}
+      )} */}
     </div>
   );
 }
