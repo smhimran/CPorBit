@@ -116,7 +116,7 @@ function Login() {
                       Password
                     </label>
                     <Link
-                      to="/forgot"
+                      to="/password-reset"
                       className="text-xs text-gray-500 dark:text-gray-300 hover:underline"
                     >
                       Forget Password?
