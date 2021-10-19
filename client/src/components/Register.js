@@ -219,7 +219,7 @@ function Register() {
                   <span className="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>
 
                   <Link
-                    to="/"
+                    to="/login"
                     className="text-xs text-gray-500 uppercase dark:text-gray-400 hover:underline"
                   >
                     Already have an account? Login

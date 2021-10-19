@@ -8,6 +8,8 @@ import Alert from "./components/elements/Alert";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Navbar from "./components/Navbar";
+import PasswordReset from "./components/PasswordReset";
+import PasswordResetConfirm from "./components/PasswordResetConfirm";
 import Profile from "./components/Profile";
 import Register from "./components/Register";
 import PrivateRoute from "./components/RoutingComponents/PrivateRoute";
@@ -88,6 +90,14 @@ function App() {
 
               <Route path="/activate/:uid/:token">
                 <ActivateAccount />
+              </Route>
+
+              <Route path="/password-reset/">
+                <PasswordReset />
+              </Route>
+
+              <Route path="/password/reset/confirm/:uid/:token">
+                <PasswordResetConfirm />
               </Route>
 
               {/* Private Routes */}

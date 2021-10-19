@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
-import { useLocation } from "react-router";
+import { matchPath, useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import { AlertContext } from "../contexts/AlertContext";
 import { UserContext } from "../contexts/UserContext";
@@ -16,11 +16,21 @@ function Navbar() {
   let path = useLocation();
 
   useEffect(() => {
-    if (path.pathname === "/login" || path.pathname === "/register") {
-      setHide(true);
-    } else {
-      setHide(false);
-    }
+    const pathsWithoutNav = [
+      "/login",
+      "/register",
+      "/password-reset",
+      "/activate",
+      "/password/reset/confirm/:uid/:token",
+    ];
+
+    setHide(false);
+
+    pathsWithoutNav.forEach((singlePath, index) => {
+      if (matchPath(path.pathname, { path: singlePath })) {
+        setHide(true);
+      }
+    });
   }, [path]);
 
   const handleLogout = () => {
@@ -38,6 +48,7 @@ function Navbar() {
         console.log(res);
         localStorage.removeItem("auth_token");
         localStorage.removeItem("user");
+        localStorage.removeItem("user_email");
         user.setUser("");
         user.setIsAuthenticated(false);
 
