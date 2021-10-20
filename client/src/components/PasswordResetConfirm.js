@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useContext, useState } from "react";
 import { useParams } from "react-router";
+import { Link } from "react-router-dom";
 import { AlertContext } from "../contexts/AlertContext";
 
 function PasswordResetConfirm() {
@@ -68,7 +69,9 @@ function PasswordResetConfirm() {
       <div className="login-page h-screen py-20 md:py-60">
         <div className="w-full max-w-sm px-6 py-12 md:px-8 m-auto bg-white rounded-md shadow-md dark:bg-gray-800">
           <h1 className="text-3xl font-semibold text-center text-primary dark:text-white">
-            CP<i className="text-secondary">or</i>Bit
+            <Link to="/">
+              CP<i className="text-secondary">or</i>Bit
+            </Link>
           </h1>
 
           <p className="text-xl text-center text-gray-600 dark:text-gray-200">

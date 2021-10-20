@@ -79,7 +79,9 @@ function Register() {
 
             <div className="w-full px-6 py-8 md:px-8 lg:w-1/2">
               <h2 className="text-2xl font-semibold text-center text-primary dark:text-white">
-                CP<i className="text-secondary">or</i>Bit
+                <Link to="/">
+                  CP<i className="text-secondary">or</i>Bit
+                </Link>
               </h2>
 
               <p className="text-xl text-center text-gray-600 dark:text-gray-200">

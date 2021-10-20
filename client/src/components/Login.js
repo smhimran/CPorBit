@@ -79,9 +79,11 @@ function Login() {
           <div className="flex max-w-sm m-auto  overflow-hidden bg-white rounded-lg shadow-xl dark:bg-gray-800 lg:max-w-5xl">
             <div className="hidden bg-cover lg:block lg:w-1/2 login-bg"></div>
 
-            <div className="w-full px-6 py-16 md:px-8 lg:w-1/2">
+            <div className="w-full px-6 py-10 md:px-8 lg:w-1/2">
               <h2 className="text-2xl font-semibold text-center text-primary dark:text-white">
-                CP<i className="text-secondary">or</i>Bit
+                <Link to="/">
+                  CP<i className="text-secondary">or</i>Bit
+                </Link>
               </h2>
 
               <p className="text-xl text-center text-gray-600 dark:text-gray-200">
