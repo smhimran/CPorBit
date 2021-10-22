@@ -1,18 +1,30 @@
 import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { matchPath, useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import { AlertContext } from "../contexts/AlertContext";
+import { ThemeContext } from "../contexts/ThemeContext";
 import { UserContext } from "../contexts/UserContext";
 
 function Navbar() {
   const [hide, setHide] = useState(false);
   const [collapse, setCollapse] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
+  const [isDark, setIsDark] = useState(false);
 
   // Contexts
   const user = useContext(UserContext);
   const displayAlert = useContext(AlertContext);
+  const theme = useContext(ThemeContext);
+
+  // handle outside click
+  const menuRef = useRef();
+
+  const handleClickOutside = (e) => {
+    if (!menuRef.current.contains(e.target)) {
+      setShowMenu(false);
+    }
+  };
 
   let path = useLocation();
 
@@ -25,13 +37,21 @@ function Navbar() {
       "/password/reset/confirm/:uid/:token",
     ];
 
-    setHide(false);
-
     pathsWithoutNav.forEach((singlePath, index) => {
       if (matchPath(path.pathname, { path: singlePath })) {
         setHide(true);
       }
     });
+
+    setHide(false);
+
+    if (theme.dark) {
+      setIsDark(true);
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+    // eslint-disable-next-line
   }, [path]);
 
   const handleLogout = () => {
@@ -57,6 +77,18 @@ function Navbar() {
       .catch((err) => {
         displayAlert("Some error occured!", false);
       });
+  };
+
+  const handleToggle = (e) => {
+    e.stopPropagation();
+
+    if (isDark) {
+      setIsDark(false);
+      theme.toggleTheme(false);
+    } else {
+      setIsDark(true);
+      theme.toggleTheme(true);
+    }
   };
 
   return (
@@ -131,7 +163,10 @@ function Navbar() {
 
                   <div className={`${collapse ? "hidden" : "block"} md:block`}>
                     {user.isAuthenticated ? (
-                      <div className="flex items-center mt-4 md:mt-0">
+                      <div
+                        className="flex items-center mt-4 md:mt-0"
+                        ref={menuRef}
+                      >
                         <button
                           className="hidden mx-4 text-gray-600 md:block dark:text-gray-200 hover:text-gray-700 dark:hover:text-gray-400 focus:text-gray-700 dark:focus:text-gray-400 focus:outline-none"
                           aria-label="show notifications"
@@ -247,6 +282,36 @@ function Navbar() {
 
                                 <span className="mx-1">Settings</span>
                               </Link>
+
+                              <hr className="border-gray-200 dark:border-gray-700 " />
+
+                              <div className="flex items-center px-3 py-3 text-sm text-gray-600  capitalize transition-colors duration-200 transform dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white">
+                                <label
+                                  htmlFor="toggleB"
+                                  className="flex items-center cursor-pointer"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                  }}
+                                >
+                                  <div className="relative">
+                                    <input
+                                      type="checkbox"
+                                      id="toggleB"
+                                      className="sr-only"
+                                      checked={isDark}
+                                      onChange={handleToggle}
+                                    />
+
+                                    <div className="block bg-gray-600 w-14 h-8 rounded-full"></div>
+
+                                    <div className="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
+                                  </div>
+
+                                  <div className="ml-3 text-gray-700 dark:text-gray-200 font-medium">
+                                    Dark theme
+                                  </div>
+                                </label>
+                              </div>
 
                               <hr className="border-gray-200 dark:border-gray-700 " />
 
