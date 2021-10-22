@@ -217,12 +217,12 @@ function Home() {
         </div>
       </section>
 
-      <footer class="bg-white dark:bg-gray-800">
-        <div class="px-6 py-6 mx-auto">
+      <footer className="bg-white dark:bg-gray-800">
+        <div className="px-6 py-6 mx-auto">
           {/* <hr class="h-px my-4 bg-gray-300 border-none dark:bg-gray-700" /> */}
 
           <div>
-            <p class="text-center text-gray-800 dark:text-white">
+            <p className="text-center text-gray-800 dark:text-white">
               ©{" "}
               <b>
                 CP<i className="text-secondary">or</i>Bit

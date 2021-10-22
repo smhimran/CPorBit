@@ -16,6 +16,7 @@ import PrivateRoute from "./components/RoutingComponents/PrivateRoute";
 import Settings from "./components/Settings";
 import Standings from "./components/Standings";
 import { AlertContext } from "./contexts/AlertContext";
+import { ThemeContext } from "./contexts/ThemeContext";
 import { UserContext } from "./contexts/UserContext";
 
 function App() {
@@ -31,6 +32,9 @@ function App() {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
 
+  // Theme states
+  const [dark, setDark] = useState(localStorage.getItem("dark") ? true : false);
+
   const displayAlert = (message, succuess) => {
     setIsSuccess(succuess);
     setAlertMessage(message);
@@ -41,6 +45,16 @@ function App() {
       setIsSuccess(false);
       setAlertMessage("");
     }, 3000);
+  };
+
+  const toggleTheme = (isDark) => {
+    setDark(isDark);
+
+    if (isDark) {
+      localStorage.setItem("dark", true);
+    } else {
+      localStorage.removeItem("dark");
+    }
   };
 
   useEffect(() => {
@@ -68,58 +82,66 @@ function App() {
         }}
       >
         <AlertContext.Provider value={displayAlert}>
-          <Router>
-            <Navbar />
-            <Switch>
-              <Route path="/about">
-                <About />
-              </Route>
+          <ThemeContext.Provider value={{ dark, toggleTheme }}>
+            <div className={dark ? "dark" : ""}>
+              <Router>
+                <Navbar />
+                <Switch>
+                  <Route path="/about">
+                    <About />
+                  </Route>
 
-              <Route path="/standings">
-                <Standings />
-              </Route>
+                  <Route path="/standings">
+                    <Standings />
+                  </Route>
 
-              {/* Auth Routes */}
-              <Route path="/register">
-                <Register />
-              </Route>
+                  {/* Auth Routes */}
+                  <Route path="/register">
+                    <Register />
+                  </Route>
 
-              <Route path="/login">
-                <Login />
-              </Route>
+                  <Route path="/login">
+                    <Login />
+                  </Route>
 
-              <Route path="/activate/:uid/:token">
-                <ActivateAccount />
-              </Route>
+                  <Route path="/activate/:uid/:token">
+                    <ActivateAccount />
+                  </Route>
 
-              <Route path="/password-reset/">
-                <PasswordReset />
-              </Route>
+                  <Route path="/password-reset/">
+                    <PasswordReset />
+                  </Route>
 
-              <Route path="/password/reset/confirm/:uid/:token">
-                <PasswordResetConfirm />
-              </Route>
+                  <Route path="/password/reset/confirm/:uid/:token">
+                    <PasswordResetConfirm />
+                  </Route>
 
-              {/* Private Routes */}
+                  {/* Private Routes */}
 
-              <PrivateRoute
-                path="/dashboard"
-                component={Dashboard}
-                exact={false}
-              />
+                  <PrivateRoute
+                    path="/dashboard"
+                    component={Dashboard}
+                    exact={false}
+                  />
 
-              <PrivateRoute path="/profile" component={Profile} exact={false} />
-              <PrivateRoute
-                path="/settings"
-                component={Settings}
-                exact={false}
-              />
+                  <PrivateRoute
+                    path="/profile"
+                    component={Profile}
+                    exact={false}
+                  />
+                  <PrivateRoute
+                    path="/settings"
+                    component={Settings}
+                    exact={false}
+                  />
 
-              <Route path="/" exact>
-                <Home />
-              </Route>
-            </Switch>
-          </Router>
+                  <Route path="/" exact>
+                    <Home />
+                  </Route>
+                </Switch>
+              </Router>
+            </div>
+          </ThemeContext.Provider>
         </AlertContext.Provider>
       </UserContext.Provider>
 
