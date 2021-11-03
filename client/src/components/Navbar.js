@@ -21,7 +21,7 @@ function Navbar() {
   const menuRef = useRef();
 
   const handleClickOutside = (e) => {
-    if (!menuRef.current.contains(e.target)) {
+    if (menuRef.current && !menuRef.current.contains(e.target)) {
       setShowMenu(false);
     }
   };
@@ -37,13 +37,13 @@ function Navbar() {
       "/password/reset/confirm/:uid/:token",
     ];
 
+    setHide(false);
+
     pathsWithoutNav.forEach((singlePath, index) => {
       if (matchPath(path.pathname, { path: singlePath })) {
         setHide(true);
       }
     });
-
-    setHide(false);
 
     if (theme.dark) {
       setIsDark(true);
