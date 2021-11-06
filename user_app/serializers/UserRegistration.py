@@ -1,4 +1,3 @@
-from djoser.conf import User
 from djoser.serializers import UserCreateSerializer
 
 
