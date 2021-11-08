@@ -1,3 +1,4 @@
+import "@material-tailwind/react/tailwind.css";
 import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import "./App.css";
@@ -26,6 +27,8 @@ function App() {
     localStorage.getItem("auth_token") ? true : false
   );
   const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
   // Alert states
   const [isSuccess, setIsSuccess] = useState(false);
@@ -75,6 +78,10 @@ function App() {
         value={{
           isAuthenticated,
           setIsAuthenticated,
+          firstName,
+          setFirstName,
+          lastName,
+          setLastName,
           user,
           setUser,
           email,

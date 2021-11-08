@@ -35,3 +35,14 @@ input:checked ~ .dot {
   transform: translateX(100%);
   background-color: #48bb78;
 }
+
+.settingsContainer {
+  display: grid;
+  grid-template-columns: 2fr 8fr;
+}
+
+@media only screen and (max-width: 768px) {
+  .settingsContainer {
+    grid-template-columns: 1fr;
+  }
+}
