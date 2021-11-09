@@ -41,8 +41,17 @@ input:checked ~ .dot {
   grid-template-columns: 2fr 8fr;
 }
 
+.profileSettingsContainer {
+  display: grid;
+  grid-template-columns: 7fr 3fr;
+  grid-column-gap: 2rem;
+}
+
 @media only screen and (max-width: 768px) {
   .settingsContainer {
+    grid-template-columns: 1fr;
+  }
+  .profileSettingsContainer {
     grid-template-columns: 1fr;
   }
 }
