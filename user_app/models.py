@@ -55,15 +55,6 @@ class Mentee(models.Model):
         return self.mentee.username + ' is a mentee of ' + self.user.username
 
 
-class MentorshipRequest(models.Model):
-    request_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    target_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='Target_user')
-    request_type = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.request_user.username + ' to ' + self.target_user.username
-
-
 class UserStatistic(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)

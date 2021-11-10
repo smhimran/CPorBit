@@ -19,27 +19,11 @@ class Problem(models.Model):
         return self.cf_problem_id
     
 
-class ProblemStatistic(models.Model):
-    problem = models.ForeignKey(Problem, on_delete=models.CASCADE)
-    newbie = models.IntegerField(default=0)
-    pupil = models.IntegerField(default=0)
-    specialist = models.IntegerField(default=0)
-    expert = models.IntegerField(default=0)
-    candidate_master = models.IntegerField(default=0)
-    master = models.IntegerField(default=0)
-    international_master = models.IntegerField(default=0)
-    grandmaster = models.IntegerField(default=0)
-    international_grandmaster = models.IntegerField(default=0)
-    legendary_grandmaster = models.IntegerField(default=0)
-
-    def __str__(self):
-        return self.problem.cf_problem_id
-
-
 class AcceptedSubmission(models.Model):
     problem = models.ForeignKey(Problem, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     timestamp = models.DateTimeField()
+    current_rating = models.IntegerField(default=0)
 
     def __str__(self):
         return self.problem.cf_problem_id + ' by ' + self.user.username
