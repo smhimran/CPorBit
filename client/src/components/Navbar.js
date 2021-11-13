@@ -12,10 +12,6 @@ function Navbar() {
   const [showMenu, setShowMenu] = useState(false);
   const [isDark, setIsDark] = useState(false);
 
-  const [avatar, setAvatar] = useState("https://i.ibb.co/3FpLmv3/man.png");
-
-  const token = localStorage.getItem("auth_token");
-
   // Contexts
   const user = useContext(UserContext);
   const displayAlert = useContext(AlertContext);
@@ -52,30 +48,6 @@ function Navbar() {
     if (theme.dark) {
       setIsDark(true);
     }
-
-    axios
-      .get(`/auth/users/me`, {
-        headers: {
-          Authorization: `Token ${token}`,
-        },
-      })
-      .then((res) => {
-        axios
-          .get(`/user/profile/${res.data.id}`, {
-            headers: {
-              Authorization: `Token ${token}`,
-            },
-          })
-          .then((res) => {
-            setAvatar(res.data.avatar);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -231,7 +203,7 @@ function Navbar() {
                           >
                             <div className="w-8 h-8 overflow-hidden border-2 border-gray-400 rounded-full">
                               <img
-                                src={avatar}
+                                src={user.avatar}
                                 className="object-cover w-full h-full"
                                 alt="avatar"
                               />
