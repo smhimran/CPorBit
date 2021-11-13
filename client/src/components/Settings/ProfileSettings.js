@@ -3,6 +3,7 @@ import Image from "@material-tailwind/react/Image";
 import axios from "axios";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { AlertContext } from "../../contexts/AlertContext";
+import { UserContext } from "../../contexts/UserContext";
 
 function ProfileSettings() {
   // States
@@ -17,6 +18,7 @@ function ProfileSettings() {
   const fileInputRef = useRef();
 
   // Context
+  const user = useContext(UserContext);
   const displayAlert = useContext(AlertContext);
 
   // Functions
@@ -43,8 +45,9 @@ function ProfileSettings() {
     })
       .then((res) => res.json())
       .then((res) => {
-        console.log(res.data);
         setIsLoading(false);
+
+        user.setAvatar(image);
 
         displayAlert("Profile updated successfully!", true);
       })
@@ -78,6 +81,8 @@ function ProfileSettings() {
       .catch((err) => {
         displayAlert("Some error occured! Try refreshing the page.", false);
       });
+
+    // eslint-disable-next-line
   }, []);
 
   return (

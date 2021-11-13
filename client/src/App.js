@@ -1,4 +1,5 @@
 import "@material-tailwind/react/tailwind.css";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import "./App.css";
@@ -29,6 +30,10 @@ function App() {
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [userProfile, setUserProfile] = useState(
+    localStorage.getItem("profile") || null
+  );
+  const [avatar, setAvatar] = useState("");
 
   // Alert states
   const [isSuccess, setIsSuccess] = useState(false);
@@ -69,6 +74,29 @@ function App() {
       setIsAuthenticated(true);
       setUser(username);
       setEmail(email);
+
+      axios
+        .get("/auth/users/me/", {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        })
+        .then((res) => {
+          axios
+            .get(`/user/profile/${res.data.id}/`, {
+              headers: {
+                Authorization: `Token ${token}`,
+              },
+            })
+            .then((result) => {
+              setUserProfile(result.data.id);
+              setAvatar(result.data.avatar);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .catch((err) => console.log(err));
     }
   }, []);
 
@@ -86,6 +114,9 @@ function App() {
           setUser,
           email,
           setEmail,
+          userProfile,
+          avatar,
+          setAvatar,
         }}
       >
         <AlertContext.Provider value={displayAlert}>
