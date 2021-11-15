@@ -24,6 +24,9 @@ urlpatterns = [
     # Path to the user_app
     path('user/', include('user_app.urls')),
 
+    # Path to gamification_app
+    path('standings/', include('gamification_app.urls')),
+
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
 ] + static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

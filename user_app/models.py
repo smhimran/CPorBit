@@ -8,7 +8,7 @@ from user_app.enums import (MenteeListPrivacy, MentorListPrivacy,
 
 # Create your models here.
 class Profile(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='profile', on_delete=models.CASCADE)
     avatar = models.ImageField(upload_to='avatars', null=True, blank=True)
     cf_handle = models.CharField(max_length=150)
     university = models.CharField(max_length=300, null=True, blank=True)
