@@ -229,7 +229,7 @@ function Navbar() {
                               >
                                 <img
                                   className="flex-shrink-0 object-cover mx-1 rounded-full w-9 h-9"
-                                  src="https://i.ibb.co/3FpLmv3/man.png"
+                                  src={user.avatar}
                                   alt="default avatar"
                                 />
                                 <div className="mx-1">
