@@ -10,7 +10,7 @@ from gamification_app.serializers.StandingsSerializer import \
 
 # Create your views here.
 class StandingsViewset(viewsets.ReadOnlyModelViewSet):
-    queryset = User.objects.all().order_by('-scoreboard__score')
+    queryset = User.objects.all().filter(is_active=True).order_by('-scoreboard__score')
     serializer_class = StandingsProfileSerializer
     pagination_class = StandingsPagination
     filter_backends = (SearchFilter,)

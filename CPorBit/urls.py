@@ -25,7 +25,7 @@ urlpatterns = [
     path('user/', include('user_app.urls')),
 
     # Path to gamification_app
-    path('standings/', include('gamification_app.urls')),
+    path('api/standings/', include('gamification_app.urls')),
 
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
