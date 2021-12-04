@@ -3,7 +3,7 @@ from django.db import models
 from problem_app.models import Tag
 
 from user_app.enums import (MenteeListPrivacy, MentorListPrivacy,
-                            SubmissionPrivacy)
+                            MentorShipStatus, SubmissionPrivacy)
 
 
 # Create your models here.
@@ -49,7 +49,19 @@ class Profile(models.Model):
 class Mentee(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     mentee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='Mentee')
-    is_current = models.BooleanField()
+    status = models.CharField(max_length=30, choices=MentorShipStatus.choices, default=MentorShipStatus.FORMER)
+
+    class Meta:
+        db_table = 'user_app_mentee'
+
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(
+                    status__in=MentorShipStatus.values
+                ),
+                name="%(app_label)s_%(class)s_status_check_cons",
+            ),
+        ]
 
     def __str__(self):
         return self.mentee.username + ' is a mentee of ' + self.user.username
