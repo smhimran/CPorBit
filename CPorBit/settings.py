@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'problem_app',
     'suggestion_app',
     'gamification_app',
+    'notification_app',
 
     # Django rest framework
     'rest_framework',

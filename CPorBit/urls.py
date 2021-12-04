@@ -27,6 +27,9 @@ urlpatterns = [
     # Path to gamification_app
     path('api/standings/', include('gamification_app.urls')),
 
+    # Path to the notification_app
+    path('api/notifications/', include('notification_app.urls')),
+
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
 ] + static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
