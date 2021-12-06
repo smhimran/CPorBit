@@ -5,11 +5,13 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import "./App.css";
 import About from "./components/About";
 import ActivateAccount from "./components/ActivateAccount";
+import Connections from "./components/Connections";
 import Dashboard from "./components/Dashboard";
 import Alert from "./components/elements/Alert";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Navbar from "./components/Navbar";
+import AllNotifications from "./components/Notifications/AllNotifications";
 import PasswordReset from "./components/PasswordReset";
 import PasswordResetConfirm from "./components/PasswordResetConfirm";
 import Profile from "./components/Profile";
@@ -17,6 +19,8 @@ import Register from "./components/Register";
 import PrivateRoute from "./components/RoutingComponents/PrivateRoute";
 import Settings from "./components/Settings";
 import Standings from "./components/Standings";
+import Submissions from "./components/Submissions";
+import Suggestions from "./components/Suggestions";
 import { AlertContext } from "./contexts/AlertContext";
 import { ThemeContext } from "./contexts/ThemeContext";
 import { UserContext } from "./contexts/UserContext";
@@ -171,6 +175,28 @@ function App() {
                     path="/settings"
                     component={Settings}
                     exact={false}
+                  />
+
+                  <PrivateRoute
+                    path="/notifications"
+                    component={AllNotifications}
+                    exact={true}
+                  />
+
+                  <PrivateRoute
+                    path="/connections"
+                    component={Connections}
+                    exact={true}
+                  />
+                  <PrivateRoute
+                    path="/submissions"
+                    component={Submissions}
+                    exact={true}
+                  />
+                  <PrivateRoute
+                    path="/suggestions"
+                    component={Suggestions}
+                    exact={true}
                   />
 
                   <Route path="/" exact>

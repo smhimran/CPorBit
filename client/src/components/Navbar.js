@@ -5,12 +5,17 @@ import { Link } from "react-router-dom";
 import { AlertContext } from "../contexts/AlertContext";
 import { ThemeContext } from "../contexts/ThemeContext";
 import { UserContext } from "../contexts/UserContext";
+import NotificationListItem from "./NotificationListItem";
 
 function Navbar() {
   const [hide, setHide] = useState(false);
   const [collapse, setCollapse] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [isDark, setIsDark] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  const [notifications, setNotifications] = useState([]);
+  const [unread, setUnread] = useState(0);
 
   // Contexts
   const user = useContext(UserContext);
@@ -23,6 +28,7 @@ function Navbar() {
   const handleClickOutside = (e) => {
     if (menuRef.current && !menuRef.current.contains(e.target)) {
       setShowMenu(false);
+      setShowNotifications(false);
     }
   };
 
@@ -50,14 +56,51 @@ function Navbar() {
     }
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
 
     // eslint-disable-next-line
   }, [path]);
 
-  const handleLogout = () => {
+  useEffect(() => {
     const token = localStorage.getItem("auth_token");
 
+    axios
+      .get("/api/notifications/", {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      })
+      .then((res) => {
+        setUnread(res.data.unread);
+        setNotifications(res.data.results);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    if (token) {
+      setInterval(() => {
+        axios
+          .get("/api/notifications/", {
+            headers: {
+              Authorization: `Token ${token}`,
+            },
+          })
+          .then((res) => {
+            setUnread(res.data.unread);
+            setNotifications(res.data.results);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }, 1000);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    const token = localStorage.getItem("auth_token");
     axios
       .post(
         "/auth/token/logout/",
@@ -165,12 +208,16 @@ function Navbar() {
                   <div className={`${collapse ? "hidden" : "block"} md:block`}>
                     {user.isAuthenticated ? (
                       <div
-                        className="flex items-center mt-4 md:mt-0"
+                        className="flex items-center mt-4 md:mt-0 relative"
                         ref={menuRef}
                       >
                         <button
-                          className="hidden mx-4 text-gray-600 md:block dark:text-gray-200 hover:text-gray-700 dark:hover:text-gray-400 focus:text-gray-700 dark:focus:text-gray-400 focus:outline-none"
+                          className="block mx-4 text-gray-600 md:block dark:text-gray-200 hover:text-gray-700 dark:hover:text-gray-400 focus:text-gray-700 dark:focus:text-gray-400 focus:outline-none"
                           aria-label="show notifications"
+                          onClick={() => {
+                            setShowNotifications(!showNotifications);
+                            setShowMenu(false);
+                          }}
                         >
                           <svg
                             className="w-6 h-6"
@@ -188,6 +235,56 @@ function Navbar() {
                           </svg>
                         </button>
 
+                        {unread === 0 ? (
+                          <></>
+                        ) : (
+                          <span className="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full absolute left-7 md:right-7 -top-1">
+                            {unread}
+                          </span>
+                        )}
+
+                        {showNotifications && (
+                          <div className="absolute -right-50 top-10 md:right-0 z-20 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+                            <div className="rounded-lg">
+                              <div className="">
+                                {notifications.length === 0 ? (
+                                  <p className="text-center text-gray-700 dark:text-gray-200 font-bold text-md m-2 p-2">
+                                    No notifications
+                                  </p>
+                                ) : (
+                                  <ul
+                                    className="list-none w-11/12 mx-auto"
+                                    onClick={() => setShowNotifications(false)}
+                                  >
+                                    {notifications.map(
+                                      (notification, index) => (
+                                        <NotificationListItem
+                                          id={notification.id}
+                                          notification_type={
+                                            notification.notification_type
+                                          }
+                                          is_read={notification.is_read}
+                                          index={index}
+                                          key={index}
+                                        />
+                                      )
+                                    )}
+                                  </ul>
+                                )}
+                              </div>
+                              <div className="text-center py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-600 dark:hover:bg-gray-500">
+                                <Link
+                                  to="/notifications"
+                                  className="text-decoration-none text-primary dark:text-gray-200 font-bold"
+                                  onClick={() => setShowNotifications(false)}
+                                >
+                                  Show all
+                                </Link>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
                         {/* dropdown */}
 
                         <div className="relative inline-block ">
@@ -197,8 +294,8 @@ function Navbar() {
                             className="flex  items-center focus:outline-none"
                             aria-label="toggle profile dropdown"
                             onClick={() => {
-                              if (showMenu) setShowMenu(false);
-                              else setShowMenu(true);
+                              setShowMenu(!showMenu);
+                              setShowNotifications(false);
                             }}
                           >
                             <div className="w-8 h-8 overflow-hidden border-2 border-gray-400 rounded-full">

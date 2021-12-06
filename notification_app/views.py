@@ -17,7 +17,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
     allowed_methods = ['GET', 'PUT', 'DELETE']
 
     def get_queryset(self):
-        notifications = Notification.objects.filter(user=self.request.user)
+        notifications = Notification.objects.filter(user=self.request.user).order_by('-id')
         self.unread = notifications.filter(is_read=False).count()
         return notifications[:5]
 
