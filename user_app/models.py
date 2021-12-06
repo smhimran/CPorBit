@@ -2,6 +2,9 @@ from django.contrib.auth.models import User
 from django.db import models
 from problem_app.models import Tag
 
+from datetime import datetime
+from django.utils.timezone import make_aware
+
 from user_app.enums import (MenteeListPrivacy, MentorListPrivacy,
                             MentorShipStatus, SubmissionPrivacy)
 
@@ -10,9 +13,10 @@ from user_app.enums import (MenteeListPrivacy, MentorListPrivacy,
 class Profile(models.Model):
     user = models.ForeignKey(User, related_name='profile', on_delete=models.CASCADE)
     avatar = models.ImageField(upload_to='avatars', null=True, blank=True)
-    cf_handle = models.CharField(max_length=150)
+    cf_handle = models.CharField(max_length=150, unique=True, null=True, blank=True)
     university = models.CharField(max_length=300, null=True, blank=True)
-    submission_privacy = models.CharField(max_length=20, choices=SubmissionPrivacy.choices, default=SubmissionPrivacy.PRIVATE)
+    timestamp_updatedsubmission = models.DateTimeField(default = make_aware(datetime.now()))
+    is_updating = models.BooleanField(default=False)
     mentor_list_privacy = models.CharField(max_length=20, choices=MentorListPrivacy.choices, default=MentorListPrivacy.PRIVATE)
     mentee_list_privacy = models.CharField(max_length=20, choices=MenteeListPrivacy.choices, default=MenteeListPrivacy.PRIVATE)
 
@@ -20,13 +24,6 @@ class Profile(models.Model):
         db_table = 'auth_user_profile'
 
         constraints = [
-            models.CheckConstraint(
-                check=models.Q(
-                    submission_privacy__in=SubmissionPrivacy.values
-                ),
-                name="%(app_label)s_%(class)s_submission_privacy_check_cons",
-            ),
-
             models.CheckConstraint(
                 check=models.Q(
                     mentor_list_privacy__in=MentorListPrivacy.values
