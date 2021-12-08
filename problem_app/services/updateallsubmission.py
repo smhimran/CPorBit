@@ -126,3 +126,26 @@ def updateSubmission(user):
         'Status': 'OK',
         'message': 'Submission update Complete of total ' + str(updatedcount)
     })
+    
+def deleteSubmission(user):    
+    profilenow = Profile.objects.get(user=user)
+    
+    profilenow.is_updating = True    
+    profilenow.timestamp_updatedsubmission = make_aware(datetime.now())
+    profilenow.save()
+    
+    try:
+        AcceptedSubmission.objects.filter(user = user).delete()
+    except Exception as e:
+        print(e)
+        print('Error deleting submission for ' + user.username)
+    
+    profilenow.is_updating = False
+    profilenow.save()
+    
+    print('Successfully Deleted all submission for user ' + user.username)
+    
+    return dict({
+        'Status': 'OK',
+        'message': 'Deleted Submissions for ' + user.username
+    })

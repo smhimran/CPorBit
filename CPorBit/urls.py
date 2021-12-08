@@ -31,8 +31,11 @@ urlpatterns = [
     # Path to the notification_app
     path('api/notifications/', include('notification_app.urls')),
     
-    # Path to problem_app
-    path('submissions/', include('problem_app.urls')),
+    # Path to problem_app submission url
+    path('api/submission/', include('problem_app.submission_urls.urls')),
+    
+    # Path to problem_app problem url
+    path('api/problem/', include('problem_app.problem_urls.urls')),
 
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
