@@ -32,6 +32,9 @@ class AcceptedSubmission(models.Model):
     timestamp = models.DateTimeField(default = make_aware(datetime.now()))
     participantType = models.CharField(max_length=20, choices=ParticipationType.choices, default=ParticipationType.PRACTICE)
     current_rating = models.IntegerField(default=0)
+    
+    class Meta:
+        ordering = ['-timestamp']
 
     def __str__(self):
         return self.problem.cf_problem_id + ' by ' + self.user.username

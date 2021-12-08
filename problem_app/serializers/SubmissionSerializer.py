@@ -6,16 +6,16 @@ from problem_app.models import Problem
 
 
 class SubmissionSerializer(serializers.ModelSerializer):
-    username = serializers.SerializerMethodField()
+    user = serializers.SerializerMethodField()
     cf_username = serializers.SerializerMethodField()
-    cf_contest_id = serializers.SerializerMethodField()
-    cf_problem_index = serializers.SerializerMethodField()
+    cf_problem_id = serializers.SerializerMethodField()
+    cf_problem_name = serializers.SerializerMethodField()
     
     class Meta:
         model = AcceptedSubmission
-        exclude = ['id', 'problem', 'user', 'current_rating']
+        fields = ('user', 'cf_username', 'cf_submission_id', 'cf_problem_id', 'cf_problem_name', 'participantType', 'timestamp')
         
-    def get_username(self, object):
+    def get_user(self, object):
         res = User.objects.get(username=object.user).username
         return res
         
@@ -23,10 +23,10 @@ class SubmissionSerializer(serializers.ModelSerializer):
         res = Profile.objects.get(user=object.user).cf_handle
         return res
     
-    def get_cf_contest_id(self, object):
-        res = Problem.objects.get(cf_problem_id=object.problem).cf_contest_id
+    def get_cf_problem_id(self, object):
+        res = Problem.objects.get(cf_problem_id=object.problem).cf_problem_id
         return res
     
-    def get_cf_problem_index(self, object):
-        res = Problem.objects.get(cf_problem_id=object.problem).cf_problem_index
+    def get_cf_problem_name(self, object):
+        res = Problem.objects.get(cf_problem_id=object.problem).cf_problem_name
         return res
