@@ -87,7 +87,7 @@ function App() {
         })
         .then((res) => {
           axios
-            .get(`/user/profile/${res.data.id}/`, {
+            .get(`api/user/profile/${res.data.id}/`, {
               headers: {
                 Authorization: `Token ${token}`,
               },

@@ -27,7 +27,7 @@ function SettingsSidebar() {
         const newUser = res.data;
 
         axios
-          .get(`/user/profile/${newUser.id}`, {
+          .get(`/api/user/profile/${newUser.id}`, {
             headers: {
               Authorization: `Token ${token}`,
             },

@@ -22,7 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Path to the user_app
-    path('user/', include('user_app.urls')),
+    path('api/user/', include('user_app.urls')),
 
     # Path to gamification_app
 
