@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from user_app.models import User
 from user_app.models import Profile
 from problem_app.models import (Problem, AcceptedSubmission)
-from problem_app.services.updateallsubmission import updateSubmission, deleteSubmission
+from problem_app.services.updateallsubmission import updateSubmission
 from problem_app.serializers.SubmissionSerializer import SubmissionSerializer
 
 import _thread
@@ -100,30 +100,4 @@ class UpdateSubmissionAV(APIView):
         return Response(dict({
             'status' : 'OK',
             'message': 'updating submissions',
-        }))
-
-class DeleteSubmissionAV(APIView):
-    permission_classes = [IsAuthenticated]
-    
-    def post(self, request):
-        usernow = request.user
-        
-        try:
-            profilenow = Profile.objects.get(user = usernow)
-        except:
-            return Response({
-                'status' : 'FAILED',
-                'message': 'profile not found',
-            })
-        if profilenow.is_updating == True:
-            return Response({
-                'status' : 'FAILED',
-                'message': 'delete in progress',
-            })
-        
-        _thread.start_new_thread(deleteSubmission, (usernow,))
-        
-        return Response(dict({
-            'status' : 'OK',
-            'message': 'deleting submissions',
         }))

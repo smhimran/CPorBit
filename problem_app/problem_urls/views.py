@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
-from problem_app.models import (Tag, Problem)
+from problem_app.models import Problem
 from problem_app.serializers.ProblemSerializer import (ProblemListSerializer, ProblemSerializer)
 
 
@@ -20,6 +20,13 @@ class ProblemListAV(APIView):
         tag = request.GET.get('tag')
         score_from = request.GET.get('from')
         score_to = request.GET.get('to')
+        problem_id = request.GET.get('id')
+        problem_name = request.GET.get('name')
+        
+        if problem_id is None:
+            problem_id = ''
+        if problem_name is None:
+            problem_name = ''
         
         score_min = 0
         score_max = 4000
@@ -29,28 +36,27 @@ class ProblemListAV(APIView):
         if score_to:
             score_max = int(score_to)
         
-        
         queryset = []
         
         if tag:
-            queryset = Problem.objects.filter(tag__name=tag, score__range=(score_min, score_max))
+            queryset = Problem.objects.filter(cf_problem_id__contains = problem_id, cf_problem_name__contains = problem_name, tag__name=tag, score__range=(score_min, score_max))
         else:
-            queryset = Problem.objects.filter(score__range=(score_min, score_max))
+            queryset = Problem.objects.filter(cf_problem_id__contains = problem_id, cf_problem_name__contains = problem_name, score__range=(score_min, score_max))
         
         serializer = ProblemListSerializer(queryset, many = True, context={'username': request.user.username})
         
         problemlist = []
         
         if orderby == 'SOLVED_ASC':
-            problemlist.append(sorted(serializer.data, key=self.get_total_solved))
+            problemlist.extend(sorted(serializer.data, key=self.get_total_solved))
         elif orderby == 'SOLVED_DESC':
-            problemlist.append(sorted(serializer.data, key=self.get_total_solved, reverse=True))
+            problemlist.extend(sorted(serializer.data, key=self.get_total_solved, reverse=True))
         elif orderby == 'SCORE_ASC':
-            problemlist.append(sorted(serializer.data, key=self.get_score))
+            problemlist.extend(sorted(serializer.data, key=self.get_score))
         elif orderby == 'SCORE_DESC':
-            problemlist.append(sorted(serializer.data, key=self.get_score, reverse=True))
+            problemlist.extend(sorted(serializer.data, key=self.get_score, reverse=True))
         else:
-            problemlist.append(serializer.data)
+            problemlist.extend(serializer.data)
             
         return Response({
             'status': 'OK',
