@@ -181,26 +181,32 @@ class MenteeViewset(viewsets.ModelViewSet):
     @action(detail=False, methods=['put'], url_path='accept_request/(?P<request_id>[^/.]+)')
     def accept_request(self, request, request_id):
         mentorship_request = Mentee.objects.filter(id=request_id)
-        if mentorship_request[0].status == 'REQUESTED_FROM_MENTOR':
+        if mentorship_request[0].status == 'REQUESTED_FROM_MENTOR' and mentorship_request[0].mentee == request.user:
             notification = Notification.objects.create(user=mentorship_request[0].mentor, notification_type='Request Accepted')
             notification.save()
-        elif mentorship_request[0].status == 'REQUESTED_FROM_MENTEE':
+            mentorship_request.update(status='CURRENT')
+        elif mentorship_request[0].status == 'REQUESTED_FROM_MENTEE' and mentorship_request[0].mentor == request.user:
             notification = Notification.objects.create(user=mentorship_request[0].mentee, notification_type='Request Accepted')
             notification.save()
-        mentorship_request.update(status='CURRENT')
+            mentorship_request.update(status='CURRENT')
+        else:
+            return Response(status=403, data={'message': 'You do not have permission to accpet this request!'})
         return Response(status=200, data={'message': 'Request accepted successfully!'})
 
 
     @action(detail=False, methods=['put'], url_path='reject_request/(?P<request_id>[^/.]+)')
     def reject_request(self, request, request_id):
         mentorship_request = Mentee.objects.filter(id=request_id)
-        if mentorship_request[0].status == 'REQUESTED_FROM_MENTOR':
+        if mentorship_request[0].status == 'REQUESTED_FROM_MENTOR' and mentorship_request[0].mentee == request.user:
             notification = Notification.objects.create(user=mentorship_request[0].mentor, notification_type='Request Rejected')
             notification.save()
-        elif mentorship_request[0].status == 'REQUESTED_FROM_MENTEE':
+            mentorship_request.delete()
+        elif mentorship_request[0].status == 'REQUESTED_FROM_MENTEE' and mentorship_request[0].mentor == request.user:
             notification = Notification.objects.create(user=mentorship_request[0].mentee, notification_type='Request Rejected')
             notification.save()
-        mentorship_request.delete()
+            mentorship_request.delete()
+        else:
+            return Response(status=403, data={'message': 'You do not have permission to reject this request!'})
         return Response(status=200, data={'message': 'Request rejected successfully!'})
 
 
@@ -243,6 +249,28 @@ class MenteeViewset(viewsets.ModelViewSet):
                 
             except User.DoesNotExist:
                 return Response(status=404, data={'message': 'User does not exist!'})
+
+        else:
+            return Response(status=401, data={'message': 'Authentication credentials were not provided.'})
+
+    
+    @action(detail=False, methods=['post'], url_path='cancel_pending_request/(?P<request_id>[^/.]+)')
+    def cancel_pending_request(self, request, request_id):
+        if request.user.is_authenticated:
+            
+            mentorships = Mentee.objects.filter(id=request_id)
+
+            if mentorships[0].mentee == request.user and mentorships[0].status == 'REQUESTED_FROM_MENTEE':
+                mentorships[0].delete()
+                return Response(status=200, data={'message': 'Request cancelled successfully!'})
+            
+            elif mentorships[0].mentor == request.user and mentorships[0].status == 'REQUESTED_FROM_MENTOR':
+                mentorships[0].delete()
+                return Response(status=200, data={'message': 'Request cancelled successfully!'})
+            
+            else:
+                return Response(status=403, data={'message': 'Request failed!'})
+
 
         else:
             return Response(status=401, data={'message': 'Authentication credentials were not provided.'})
