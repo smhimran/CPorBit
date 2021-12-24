@@ -52,11 +52,19 @@ input:checked ~ .dot {
   grid-template-columns: 1fr 24fr;
 }
 
+.connections-grid {
+  display: grid;
+  grid-template-columns: 2fr 8fr;
+}
+
 @media only screen and (max-width: 768px) {
   .settingsContainer {
     grid-template-columns: 1fr;
   }
   .profileSettingsContainer {
+    grid-template-columns: 1fr;
+  }
+  .connections-grid {
     grid-template-columns: 1fr;
   }
 }
