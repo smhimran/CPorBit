@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import "./App.css";
 import About from "./components/About";
 import ActivateAccount from "./components/ActivateAccount";
-import Connections from "./components/Connections";
+import Connections from "./components/Connections/Connections";
 import Dashboard from "./components/Dashboard";
 import Alert from "./components/elements/Alert";
 import Home from "./components/Home";
@@ -79,6 +79,8 @@ function App() {
       setUser(username);
       setEmail(email);
 
+      axios.defaults.headers.common["Authorization"] = `Token ${token}`;
+
       axios
         .get("/auth/users/me/", {
           headers: {
@@ -87,7 +89,7 @@ function App() {
         })
         .then((res) => {
           axios
-            .get(`api/user/profile/${res.data.id}/`, {
+            .get(`/api/user/profile/${res.data.id}/`, {
               headers: {
                 Authorization: `Token ${token}`,
               },
@@ -186,7 +188,7 @@ function App() {
                   <PrivateRoute
                     path="/connections"
                     component={Connections}
-                    exact={true}
+                    exact={false}
                   />
                   <PrivateRoute
                     path="/submissions"
