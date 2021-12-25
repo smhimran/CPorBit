@@ -18,53 +18,36 @@ class SubmissionAV(APIView):
     def get(self, request):
         username = request.GET.get('user')
         problemid = request.GET.get('problem')
+        limit = request.GET.get('limit')
         
         queryset = []
         if username and problemid:
             try:
-                usernow = User.objects.get(username=username)
-            except Exception as e:
-                print(e)
-                print('User not found')
-                return Response(dict({
-                    'status': 'FAILED',
-                    'message': 'user not found'
-                }))
-            try:
-                problemnow = Problem.objects.get(cf_problem_id = problemid)
-            except Exception as e:
-                print(e)
-                print('Problem not found')
-                return Response(dict({
-                    'status': 'FAILED',
-                    'message': 'problem not found'
-                }))
-            queryset = AcceptedSubmission.objects.filter(user = usernow, problem = problemnow)
+                cnt = int(limit)
+                queryset = AcceptedSubmission.objects.filter(user__username = username, problem__cf_problem_id = problemid)[:cnt]
+            except:
+                queryset = AcceptedSubmission.objects.filter(user__username = username, problem__cf_problem_id = problemid)
         elif username:
             try:
-                usernow = User.objects.get(username=username)
-            except Exception as e:
-                print(e)
-                print('User not found')
-                return Response(dict({
-                    'status': 'FAILED',
-                    'message': 'user not found'
-                }))
-            queryset = AcceptedSubmission.objects.filter(user=usernow)
+                cnt = int(limit)
+                queryset = AcceptedSubmission.objects.filter(user__username=username)[:cnt]
+            except:
+                queryset = AcceptedSubmission.objects.filter(user__username=username)
         elif problemid:
             try:
-                problemnow = Problem.objects.get(cf_problem_id = problemid)
-            except Exception as e:
-                print(e)
-                print('Problem not found')
-                return Response(dict({
-                    'status': 'FAILED',
-                    'message': 'problem not found'
-                }))
-            queryset = AcceptedSubmission.objects.filter(problem = problemnow)
+                cnt = int(limit)
+                queryset = AcceptedSubmission.objects.filter(problem__cf_problem_id = problemid)[:cnt]
+            except:
+                queryset = AcceptedSubmission.objects.filter(problem__cf_problem_id = problemid)
         else:
-            queryset = AcceptedSubmission.objects.all()
+            try:
+                cnt = int(limit)
+                queryset = AcceptedSubmission.objects.all()[:cnt]
+            except:
+                queryset = AcceptedSubmission.objects.all()
+            
         serializer = SubmissionSerializer(queryset, many = True)
+        
         return Response({
             'status': 'OK',
             'submissions': serializer.data

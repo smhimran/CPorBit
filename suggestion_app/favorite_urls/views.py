@@ -24,13 +24,13 @@ class FavoriteAV(APIView):
             else:
                 queryset = Favorite.objects.filter(user=usernow)[:int(limit)]
         except Exception as e:
-            print("Error Finding Favorits")
+            print(e)
             return Response({
                 'status': 'FAILED',
                 'problems': "Error in database query",
             })
         
-        serializer = FavoriteSerializer(queryset, many=True, context={'username': request.user.username})
+        serializer = FavoriteSerializer(queryset, many=True)
         return Response({
             'status': 'OK',
             'favorits': serializer.data,
