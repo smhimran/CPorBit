@@ -1,8 +1,8 @@
 from datetime import datetime
 
+from django.utils.timezone import make_aware
 from django.contrib.auth.models import User
 from django.db import models
-from django.utils.timezone import make_aware
 from problem_app.models import Tag
 
 from user_app.enums import MentorShipStatus

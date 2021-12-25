@@ -36,6 +36,9 @@ urlpatterns = [
     
     # Path to problem_app problem url
     path('api/problem/', include('problem_app.problem_urls.urls')),
+    
+    # Path to suggestion_app favorite url
+    path('api/favorite/', include('suggestion_app.favorite_urls.urls')),
 
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
