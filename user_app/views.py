@@ -38,9 +38,9 @@ class MenteeViewset(viewsets.ModelViewSet):
 
             if requests.count() > 0:
                 if requests[0].status == 'CURRENT':
-                    return response.Response({'message': 'This user is already a connection!'}, status=400)
+                    return Response({'message': 'This user is already a connection!'}, status=400)
                 elif requests[0].status != 'FORMER':
-                    return response.Response({'message': 'There is already a pending request!'}, status=400)
+                    return Response({'message': 'There is already a pending request!'}, status=400)
 
                 else:
                     if requests[0].mentor == user:
@@ -48,7 +48,7 @@ class MenteeViewset(viewsets.ModelViewSet):
                         old_request.status = 'REQUESTED_FROM_MENTOR'
                         old_request.save()
 
-                        return response.Response({'message': 'Request sent successfully!'}, status=201)
+                        return Response({'message': 'Request sent successfully!'}, status=201)
 
                     else:
                         old_request = requests[0]
@@ -57,7 +57,7 @@ class MenteeViewset(viewsets.ModelViewSet):
                         old_request.status = 'REQUESTED_FROM_MENTOR'
                         old_request.save()
 
-                        return response.Response({'message': 'Request sent successfully!'}, status=201)
+                        return Response({'message': 'Request sent successfully!'}, status=201)
                     
 
             mentorship_request = Mentee.objects.create(mentor=user, mentee=mentee, status='REQUESTED_FROM_MENTOR')
@@ -81,9 +81,9 @@ class MenteeViewset(viewsets.ModelViewSet):
 
             if requests.count() > 0:
                 if requests[0].status == 'CURRENT':
-                    return response.Response({'message': 'This user is already a connection!'}, status=400)
+                    return Response({'message': 'This user is already a connection!'}, status=400)
                 elif requests[0].status != 'FORMER':
-                    return response.Response({'message': 'There is already a pending request!'}, status=400)
+                    return Response({'message': 'There is already a pending request!'}, status=400)
 
                 else:
                     if requests[0].mentee == user:
@@ -91,7 +91,7 @@ class MenteeViewset(viewsets.ModelViewSet):
                         old_request.status = 'REQUESTED_FROM_MENTEE'
                         old_request.save()
 
-                        return response.Response({'message': 'Request sent successfully!'}, status=201)
+                        return Response({'message': 'Request sent successfully!'}, status=201)
 
                     else:
                         old_request = requests[0]
@@ -100,7 +100,7 @@ class MenteeViewset(viewsets.ModelViewSet):
                         old_request.status = 'REQUESTED_FROM_MENTEE'
                         old_request.save()
 
-                        return response.Response({'message': 'Request sent successfully!'}, status=201)
+                        return Response({'message': 'Request sent successfully!'}, status=201)
 
             mentorship_request = Mentee.objects.create(mentor=mentor, mentee=user, status='REQUESTED_FROM_MENTEE')
             mentorship_request.save()
