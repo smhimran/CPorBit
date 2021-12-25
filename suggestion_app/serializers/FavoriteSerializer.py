@@ -12,5 +12,5 @@ class FavoriteSerializer(serializers.ModelSerializer):
         fields = ('timestamp', 'problem')
         
     def get_problem(self, object):
-        serializer = ProblemListSerializer(object.problem, context={'username': self.context.get('username')})
+        serializer = ProblemListSerializer(object.problem, context={'username': object.user.username})
         return serializer.data

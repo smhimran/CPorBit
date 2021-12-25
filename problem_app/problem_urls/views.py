@@ -28,13 +28,14 @@ class ProblemListAV(APIView):
         if problem_name is None:
             problem_name = ''
         
-        score_min = 0
-        score_max = 4000
-        
-        if score_from:
+        try:
             score_min = int(score_from)
-        if score_to:
+        except:
+            score_min = 0
+        try:
             score_max = int(score_to)
+        except:
+            score_max = 4000
         
         queryset = []
         
