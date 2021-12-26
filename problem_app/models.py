@@ -1,9 +1,11 @@
+from datetime import datetime
+
 from django.contrib.auth.models import User
 from django.db import models
-from datetime import datetime
 from django.utils.timezone import make_aware
 
 from problem_app.enums import ParticipationType
+
 
 class Tag(models.Model):
     name = models.CharField(max_length=100, unique=True)
