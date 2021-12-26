@@ -25,16 +25,12 @@ class StandingsViewset(viewsets.ReadOnlyModelViewSet):
 
 @api_view(['GET'])
 @renderer_classes([JSONRenderer])
-def get_user_score(request):
-    username = request.GET.get('username')
-    scores = []
-    if username:
+def get_user_score(request,username):
+    try:
         user = User.objects.get(username=username)
         scores = ScoreBoard.objects.filter(user=user)
         return Response(ProfileScoreSerializer(scores[0]).data, status=200)
-    elif request.user.is_authenticated:
-        scores = ScoreBoard.objects.filter(user=request.user)
-        return Response(ProfileScoreSerializer(scores[0]).data, status=200)
-    else:
-        return Response({'message': 'Bad  Request!'}, status=400)
-        
+    
+    except User.DoesNotExist:
+        return Response({'message': 'User not found'} ,status=404)
+    

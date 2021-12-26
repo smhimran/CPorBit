@@ -8,6 +8,6 @@ router = DefaultRouter()
 router.register('', StandingsViewset)
 
 urlpatterns = [
-    path('profile/', get_user_score, name='profile-score'),
+    path('profile/<username>/', get_user_score, name='profile-score'),
     path('', include(router.urls)),
 ]
