@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from notification_app.models import Notification
+from problem_app.services.updateallsubmission import deleteSubmission
 from rest_framework import response, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -16,6 +17,18 @@ class ProfileViewset(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+    allowed_methods = ('GET', 'POST', 'PUT', 'DELETE')
+
+    def update(self, request, *args, **kwargs):
+        profile = self.get_object()
+        serializer = self.get_serializer(profile, data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        if serializer.validated_data['cf_handle'] != profile.cf_handle:
+            deleteSubmission(request.user)
+
+        serializer.save()
+        return Response(serializer.data)
 
 
 class MenteeViewset(viewsets.ModelViewSet):
