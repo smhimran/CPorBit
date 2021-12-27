@@ -1,10 +1,11 @@
-import requests
 from datetime import datetime
-from django.utils.timezone import make_aware
 
-from problem_app.models import (Problem, AcceptedSubmission)
+import requests
+from django.utils.timezone import make_aware
+from gamification_app.models import ScoreBoard
+from problem_app.models import AcceptedSubmission, Problem
 from problem_app.services.updateproblem import updateProblem
-from user_app.models import Profile
+from user_app.models import Profile, UserStatistic
 
 
 def getSubmissionRating(responseRatingChange, submissiontime):
@@ -111,6 +112,27 @@ def updateSubmission(user):
                 current_rating = value['currentrating']
             )
             new_submission.save()
+
+            for tag in problemnow.tag.all():
+                userstat = UserStatistic.objects.filter(user=user).filter(tag=tag)
+                if userstat:
+                    userstat[0].count += 1
+                    userstat[0].score += problemnow.score
+                    userstat[0].save()
+                
+                else:
+                    new_userstat = UserStatistic(
+                        user = user,
+                        tag = tag,
+                        count = 1,
+                        score = problemnow.score
+                    )
+                    new_userstat.save()
+
+                scoreboard = ScoreBoard.objects.get(user=user)
+                scoreboard.score += problemnow.score
+                scoreboard.save()
+
         except Exception as e:
             print(e)
             print('Submission not saved')
@@ -136,6 +158,12 @@ def deleteSubmission(user):
     
     try:
         AcceptedSubmission.objects.filter(user = user).delete()
+        userstat = UserStatistic.objects.filter(user = user)
+        userstat.delete()
+        scoreboard = ScoreBoard.objects.get(user=user)
+        scoreboard.score = 0
+        scoreboard.save()
+
     except Exception as e:
         print(e)
         print('Error deleting submission for ' + user.username)
