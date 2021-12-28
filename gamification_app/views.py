@@ -7,6 +7,7 @@ from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.filters import SearchFilter
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
+from suggestion_app.services.UserStrengthServices import getUserStrengthsOnTags
 
 from gamification_app.models import ScoreBoard
 from gamification_app.paginations.StandingsPagination import \
@@ -72,3 +73,27 @@ def get_user_stats(request, username):
     
     except User.DoesNotExist:
         return Response({'message': 'User not found'} ,status=404)
+
+
+@api_view(['GET'])
+@renderer_classes([JSONRenderer])
+def get_user_strength(request, username):
+    try:
+        user = User.objects.get(username=username)
+        strengths = getUserStrengthsOnTags(user)
+
+        return Response(strengths[:5], status=200)
+    except User.DoesNotExist:
+        return Response({"message": "User not found"}, status=404)
+
+
+@api_view(['GET'])
+@renderer_classes([JSONRenderer])
+def get_user_weakness(request, username):
+    try:
+        user = User.objects.get(username=username)
+        weaknesses = getUserStrengthsOnTags(user)
+
+        return Response(weaknesses[-5:], status=200)
+    except User.DoesNotExist:
+        return Response({"message": "User not found"}, status=404)
