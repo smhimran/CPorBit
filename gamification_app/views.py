@@ -46,6 +46,7 @@ def get_user_stats(request, username):
         submissions = AcceptedSubmission.objects.filter(user=user)
         
         data = {}
+        total = submissions.count()
         for submission in submissions:
             for tag in submission.problem.tag.all():
                 if tag.name in data:
@@ -53,7 +54,21 @@ def get_user_stats(request, username):
                 else:
                     data[tag.name] = 1
 
-        return Response(data, status=200)
+        ret = {}
+        tags = {}
+
+        ret["total"] = total
+
+        for key, value in data.items():
+            item = {}
+            per = round(value/total*100, 2)
+            item["count"] = value
+            item["percentage"] = per
+            tags[key] = item
+
+        ret["tags"] = tags
+
+        return Response(ret, status=200)
     
     except User.DoesNotExist:
         return Response({'message': 'User not found'} ,status=404)
