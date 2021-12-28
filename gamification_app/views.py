@@ -97,3 +97,23 @@ def get_user_weakness(request, username):
         return Response(weaknesses[-5:], status=200)
     except User.DoesNotExist:
         return Response({"message": "User not found"}, status=404)
+
+
+@api_view(['GET'])
+@renderer_classes([JSONRenderer])
+def get_hardest_problem_solved(request, username):
+    try:
+        user = User.objects.get(username=username)
+        submissions = AcceptedSubmission.objects.filter(user=user)
+        submissions = submissions.order_by('-problem__score')
+
+        problem = {
+            "cf_id": submissions[0].problem.cf_problem_id,
+            "name": submissions[0].problem.cf_problem_name,
+            "score": submissions[0].problem.score,
+            "tags": [tag.name for tag in submissions[0].problem.tag.all()]
+        }
+
+        return Response(problem, status=200)
+    except User.DoesNotExist:
+        return Response({"message": "User not found"}, status=404)
