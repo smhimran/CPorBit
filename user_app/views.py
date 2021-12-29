@@ -1,14 +1,16 @@
 from django.contrib.auth.models import User
 from notification_app.models import Notification
 from problem_app.services.updateallsubmission import deleteSubmission
-from rest_framework import response, viewsets
-from rest_framework.decorators import action
+from rest_framework import viewsets
+from rest_framework.decorators import action, api_view, renderer_classes
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
 from user_app.models import Mentee, Profile
 from user_app.permissions.UserPermissions import (IsMentorOrMenteeOrReadOnly,
                                                   IsOwnerOrReadOnly)
+from user_app.serializers.CurrentUserSerializer import CurrentUserSerializer
 from user_app.serializers.MentorshipSerializer import MenteeSerializer
 from user_app.serializers.ProfileSerializer import ProfileSerializer
 
@@ -18,6 +20,11 @@ class ProfileViewset(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
     permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
     allowed_methods = ('GET', 'POST', 'PUT', 'DELETE')
+
+    def get_queryset(self):
+        username = self.request.GET.get('username') or self.request.user.username
+        user = User.objects.get(username=username)
+        return  Profile.objects.filter(user=user)
 
     def update(self, request, *args, **kwargs):
         profile = self.get_object()
@@ -226,7 +233,7 @@ class MenteeViewset(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def is_connection_or_requested(self, request):
         if request.user.is_authenticated:
-            username = request.data.get('username')
+            username = request.GET.get('username')
             try:
                 user = User.objects.get(username=username)
 
@@ -287,3 +294,13 @@ class MenteeViewset(viewsets.ModelViewSet):
 
         else:
             return Response(status=401, data={'message': 'Authentication credentials were not provided.'})
+
+
+@api_view(['GET'])
+@renderer_classes((JSONRenderer,))
+def get_user_info(request, username):
+    try:
+        user = User.objects.get(username=username)
+        return Response(data=CurrentUserSerializer(user).data, status=200)
+    except User.DoesNotExist:
+        return Response(status=404, data={'message': 'User does not exist!'})
