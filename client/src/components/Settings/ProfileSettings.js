@@ -69,10 +69,13 @@ function ProfileSettings() {
       })
       .then((res) => {
         axios
-          .get(`/api/user/profile/${res.data.id}`)
+          .get(`/api/user/profile/?username=${res.data.username}`)
           .then((result) => {
-            setProfile(result.data);
-            setImage(result.data.avatar || "https://i.ibb.co/3FpLmv3/man.png");
+            // console.log(result);
+            setProfile(result.data[0]);
+            setImage(
+              result.data[0].avatar || "https://i.ibb.co/3FpLmv3/man.png"
+            );
           })
           .catch((err) => {
             displayAlert("Some error occured! Try refreshing the page", false);

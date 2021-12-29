@@ -79,7 +79,7 @@ function App() {
       setUser(username);
       setEmail(email);
 
-      axios.defaults.headers.common["Authorization"] = `Token ${token}`;
+      // axios.defaults.headers.common["Authorization"] = `Token ${token}`;
 
       axios
         .get("/auth/users/me/", {
@@ -139,6 +139,10 @@ function App() {
                     <Standings />
                   </Route>
 
+                  <Route path="/profile/:username">
+                    <Profile />
+                  </Route>
+
                   {/* Auth Routes */}
                   <Route path="/register">
                     <Register />
@@ -168,11 +172,6 @@ function App() {
                     exact={false}
                   />
 
-                  <PrivateRoute
-                    path="/profile"
-                    component={Profile}
-                    exact={false}
-                  />
                   <PrivateRoute
                     path="/settings"
                     component={Settings}
