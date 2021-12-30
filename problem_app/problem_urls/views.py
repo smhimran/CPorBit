@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
-from problem_app.models import Problem
+from problem_app.models import Problem, AcceptedSubmission
 from problem_app.serializers.ProblemSerializer import (ProblemListSerializer, ProblemSerializer)
 
 
@@ -63,6 +63,7 @@ class ProblemListAV(APIView):
             'status': 'OK',
             'problems': problemlist
         })
+        
         
 class ProblemAV(APIView):
     permission_classes = [IsAuthenticated]

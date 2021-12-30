@@ -22,9 +22,12 @@ class Problem(models.Model):
     cf_problem_name = models.CharField(max_length=100, null=True)
     score = models.IntegerField(default=0)
     timestamp_updated = models.DateTimeField(default = make_aware(datetime.now()))
+    
+    class Meta:
+        ordering = ['cf_problem_id']
 
     def __str__(self):
-        return self.cf_problem_id
+        return self.cf_problem_id + ' - ' + self.cf_problem_name
     
 
 class AcceptedSubmission(models.Model):

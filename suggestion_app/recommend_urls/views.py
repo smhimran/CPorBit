@@ -53,7 +53,7 @@ class RecommendationAV(APIView):
                 'message' : 'Problem not recommended',
             })
         
-        if AcceptedSubmission.objects.filter(user = usernow, problem__cf_problem_id = problemid).exists():
+        if AcceptedSubmission.objects.filter(user = usernow, problem = recnow.problem).exists():
             recnow.delete()        
             return Response({
                 'status': 'OK',
@@ -145,6 +145,12 @@ class RecommendAV(APIView):
             return Response({
                 'status' : 'FAILED',
                 'message' : 'Problem Already Recommended',
+            })
+            
+        if Recommendation.objects.filter(user = mentee).count() > 99:
+            return Response({
+                'status' : 'FAILED',
+                'message' : 'Limit Reached, delete some recommendations to add new recommendations',
             })
         
         recnow = Recommendation(

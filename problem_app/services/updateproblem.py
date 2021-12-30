@@ -79,19 +79,4 @@ def updateProblem(cf_problem):
     if addProblem(cf_problem) == False:
         return False
     
-    # try:
-    #     problemnow = Problem.objects.get(cf_problem_id = problemId)
-    # except:
-    #     print('Error finding problem')
-    # else:
-    #     for it in cf_problem['tags']:
-    #         try:
-    #             tagnow = Tag.objects.get(name = it)
-    #         except:
-    #             print('Error finding tag')
-    #         else:
-    #             try:
-    #                 problemnow.tag.add(tagnow)
-    #             except:
-    #                 print('Error in adding tag to problem')
     return updateTags(cf_problem)
