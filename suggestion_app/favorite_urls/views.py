@@ -55,6 +55,12 @@ class FavoriteAV(APIView):
                 'status' : 'FAILED',
                 'message' : 'Problem already exists',
             })
+            
+        if Favorite.objects.filter(user = usernow).count() > 99:
+            return Response({
+                'status' : 'FAILED',
+                'message' : 'Limit Reached, delete some favorites to add new favorite',
+            })
         
         newfav = Favorite(
             user = usernow,

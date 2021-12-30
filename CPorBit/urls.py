@@ -42,6 +42,9 @@ urlpatterns = [
     
     # Path to suggestion_app favorite url
     path('api/recommendation/', include('suggestion_app.recommend_urls.urls')),
+    
+    # Path to suggestion_app suggestion url
+    path('api/suggestion/', include('suggestion_app.suggestion_urls.urls')),
 
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),

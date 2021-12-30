@@ -50,6 +50,7 @@ class SubmissionAV(APIView):
         
         return Response({
             'status': 'OK',
+            'count': len(serializer.data),
             'submissions': serializer.data
         })
     
