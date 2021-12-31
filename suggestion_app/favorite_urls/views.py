@@ -1,14 +1,12 @@
 from datetime import datetime
-from django.utils.timezone import make_aware
 
+from django.utils.timezone import make_aware
+from problem_app.models import Problem
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-
 from suggestion_app.models import Favorite
 from suggestion_app.serializers.FavoriteSerializer import FavoriteSerializer
-
-from problem_app.models import Problem
 
 
 class FavoriteAV(APIView):
@@ -28,7 +26,7 @@ class FavoriteAV(APIView):
             return Response({
                 'status': 'FAILED',
                 'problems': "Error in database query",
-            })
+            }, status=500)
         
         serializer = FavoriteSerializer(queryset, many=True)
         return Response({
@@ -48,7 +46,7 @@ class FavoriteAV(APIView):
             return Response({
                 'status' : 'FAILED',
                 'message' : 'Problem not found',
-            })
+            }, status=404)
             
         if Favorite.objects.filter(user = usernow, problem = problemnow).exists():
             return Response({
@@ -86,7 +84,7 @@ class FavoriteAV(APIView):
             return Response({
                 'status' : 'FAILED',
                 'message' : 'Problem not found',
-            })
+            }, status=404)
         
         favnow.delete()
         

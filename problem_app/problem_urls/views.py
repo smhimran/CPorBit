@@ -1,9 +1,9 @@
+from problem_app.models import AcceptedSubmission, Problem
+from problem_app.serializers.ProblemSerializer import (ProblemListSerializer,
+                                                       ProblemSerializer)
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-
-from problem_app.models import Problem, AcceptedSubmission
-from problem_app.serializers.ProblemSerializer import (ProblemListSerializer, ProblemSerializer)
 
 
 class ProblemListAV(APIView):
@@ -77,7 +77,7 @@ class ProblemAV(APIView):
             return Response({
                 'status': 'FAILED',
                 'message': 'Problem not found'
-            })
+            }, status=404)
         serializer = ProblemSerializer(queryset, context={'username': request.user.username})
         return Response({
             'status': 'OK',
