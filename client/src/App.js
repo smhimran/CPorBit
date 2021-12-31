@@ -14,6 +14,7 @@ import Navbar from "./components/Navbar";
 import AllNotifications from "./components/Notifications/AllNotifications";
 import PasswordReset from "./components/PasswordReset";
 import PasswordResetConfirm from "./components/PasswordResetConfirm";
+import Problem from "./components/Problem";
 import Profile from "./components/Profile";
 import Register from "./components/Register";
 import PrivateRoute from "./components/RoutingComponents/PrivateRoute";
@@ -169,6 +170,12 @@ function App() {
                   <PrivateRoute
                     path="/dashboard"
                     component={Dashboard}
+                    exact={false}
+                  />
+
+                  <PrivateRoute
+                    path="/problem/:problem_id"
+                    component={Problem}
                     exact={false}
                   />
 

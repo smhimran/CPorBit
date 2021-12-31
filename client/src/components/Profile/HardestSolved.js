@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 function HardestSolved() {
   const [problem, setProblem] = React.useState({});
@@ -21,10 +21,12 @@ function HardestSolved() {
   }, []);
 
   return (
-    <div className="my-2 py-2 dark:text-gray-200">
-      <span className="font-bold">Hardest Solved Problem:</span>{" "}
-      {problem.cf_id + " - " + problem.name}
-    </div>
+    <Link to={`/problem/${problem.cf_id}`}>
+      <div className="my-2 py-2 dark:text-gray-200">
+        <span className="font-bold">Hardest Solved Problem:</span>{" "}
+        {problem.cf_id + " - " + problem.name}
+      </div>
+    </Link>
   );
 }
 

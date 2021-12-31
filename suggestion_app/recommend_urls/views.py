@@ -1,15 +1,15 @@
 from datetime import datetime
-from django.utils.timezone import make_aware
 
+from django.utils.timezone import make_aware
+from problem_app.models import AcceptedSubmission, Problem
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
-
 from suggestion_app.models import Recommendation
-from problem_app.models import (AcceptedSubmission, Problem)
-from user_app.models import (Mentee, User)
-from suggestion_app.serializers.RecommendSerializer import RecommendationSerializer
+from suggestion_app.serializers.RecommendSerializer import \
+    RecommendationSerializer
+from user_app.models import Mentee, User
 
 
 class RecommendationAV(APIView):
@@ -42,7 +42,7 @@ class RecommendationAV(APIView):
             return Response({
                 'status' : 'FAILED',
                 'message' : 'No problem selected'
-            })
+            }, status=400)
             
         try:
             recnow = Recommendation.objects.get(user = usernow, problem__cf_problem_id = problemid)
@@ -51,7 +51,7 @@ class RecommendationAV(APIView):
             return Response({
                 'status' : 'FAILED',
                 'message' : 'Problem not recommended',
-            })
+            }, status=404)
         
         if AcceptedSubmission.objects.filter(user = usernow, problem = recnow.problem).exists():
             recnow.delete()        
@@ -63,7 +63,7 @@ class RecommendationAV(APIView):
         return Response({
             'status' : 'FAILED',
             'message' : 'Problem not solved',
-        })
+        }, status=400)
 
 
         
@@ -80,13 +80,13 @@ class RecommendAV(APIView):
             return Response({
                 'status': 'FAILED',
                 'message' : 'Mentee Not Found',
-            })
+            }, status=404)
         
         if Mentee.objects.filter(mentor=mentor, mentee=mentee, status="CURRENT").exists() == False:
             return Response({
                 'status' : 'FAILED',
                 'message' : 'Not current Mentor'
-            }, status=status.HTTP_401_UNAUTHORIZED)
+            }, status=403)
         
         limit = request.GET.get('limit')
         
@@ -121,7 +121,7 @@ class RecommendAV(APIView):
             return Response({
                 'status' : 'FAILED',
                 'message' : 'Not current Mentor'
-            }, status=status.HTTP_401_UNAUTHORIZED)
+            }, status=403)
             
         problemid = request.data.get('cf_problem_id')
         note = request.data.get('note')
@@ -130,7 +130,7 @@ class RecommendAV(APIView):
             return Response({
                 'status' : 'FAILED',
                 'message' : 'No problem selected'
-            })
+            }, status=400)
             
         try:
             probnow = Problem.objects.get(cf_problem_id = problemid)
@@ -139,19 +139,19 @@ class RecommendAV(APIView):
             return Response({
                 'status' : 'FAILED',
                 'message' : 'Problem not found',
-            })
+            }, status=404)
             
         if Recommendation.objects.filter(user = mentee, problem = probnow).exists():
             return Response({
                 'status' : 'FAILED',
                 'message' : 'Problem Already Recommended',
-            })
+            }, status=400)
             
         if Recommendation.objects.filter(user = mentee).count() > 99:
             return Response({
                 'status' : 'FAILED',
                 'message' : 'Limit Reached, delete some recommendations to add new recommendations',
-            })
+            }, status=400)
         
         recnow = Recommendation(
             user = mentee,
@@ -178,13 +178,13 @@ class RecommendAV(APIView):
             return Response({
                 'status': 'FAILED',
                 'message' : 'Mentee Not Found',
-            })
+            }, status=404)
         
         if Mentee.objects.filter(mentor=mentor, mentee=mentee, status="CURRENT").exists() == False:
             return Response({
                 'status' : 'FAILED',
                 'message' : 'Not current Mentor'
-            }, status=status.HTTP_401_UNAUTHORIZED)
+            }, status=403)
             
         problemid = request.data.get('cf_problem_id')
         
@@ -192,7 +192,7 @@ class RecommendAV(APIView):
             return Response({
                 'status' : 'FAILED',
                 'message' : 'No problem selected'
-            })
+            }, status=400)
             
         try:
             recnow = Recommendation.objects.get(user = mentee, problem__cf_problem_id = problemid)
@@ -201,7 +201,7 @@ class RecommendAV(APIView):
             return Response({
                 'status' : 'FAILED',
                 'message' : 'Problem not found',
-            })
+            }, status=404)
             
         recnow.delete()
         

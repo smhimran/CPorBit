@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 function StandingsBody() {
   const [people, setPeople] = useState([]);
@@ -220,14 +221,18 @@ function StandingsBody() {
                             </div>
                           </td>
                           <td className="px-6 py-6 whitespace-nowrap w-2/12 dark:bg-gray-800">
-                            <div className="text-sm font-medium text-gray-900 dark:text-gray-200">
-                              {person.first_name} {person.last_name}
-                            </div>
+                            <Link to={`/profile/${person.username}`}>
+                              <div className="text-sm font-medium text-gray-900 dark:text-gray-200">
+                                {person.first_name} {person.last_name}
+                              </div>
+                            </Link>
                           </td>
                           <td className="px-6 py-6 whitespace-nowrap w-1/12 dark:bg-gray-800">
-                            <div className="text-sm text-gray-900 dark:text-gray-200">
-                              {person.username}
-                            </div>
+                            <Link to={`/profile/${person.username}`}>
+                              <div className="text-sm text-gray-900 dark:text-gray-200">
+                                {person.username}
+                              </div>
+                            </Link>
                           </td>
                           <td className="px-6 py-6 whitespace-nowrap w-1/12 dark:bg-gray-800">
                             <div className="text-sm text-gray-900 dark:text-gray-200">
