@@ -1,15 +1,13 @@
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-
-from user_app.models import User
-from user_app.models import Profile
-from problem_app.models import (Problem, AcceptedSubmission)
-from problem_app.services.updateallsubmission import updateSubmission
-from problem_app.serializers.SubmissionSerializer import SubmissionSerializer
-
 import _thread
+
+from problem_app.models import AcceptedSubmission, Problem
+from problem_app.serializers.SubmissionSerializer import SubmissionSerializer
+from problem_app.services.updateallsubmission import updateSubmission
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from user_app.models import Profile, User
 
 
 class SubmissionAV(APIView):
@@ -67,17 +65,17 @@ class UpdateSubmissionAV(APIView):
             return Response({
                 'status' : 'FAILED',
                 'message': 'profile not found',
-            })
+            }, status=404)
         if profilenow.is_updating == True:
             return Response({
                 'status' : 'FAILED',
                 'message': 'update in progress',
-            })
+            }, status=400)
         if not profilenow.cf_handle:
             return Response({
                 'status' : 'FAILED',
                 'message': 'no codeforces handle found',
-            })
+            }, status=404)
         
         _thread.start_new_thread(updateSubmission, (usernow,))
         

@@ -5,11 +5,13 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import "./App.css";
 import About from "./components/About";
 import ActivateAccount from "./components/ActivateAccount";
+import AllFavorites from "./components/AllFavorites";
 import AllProblems from "./components/AllProblems";
+import AllRecommendations from "./components/AllRecommendations";
 import Connections from "./components/Connections/Connections";
 import Dashboard from "./components/Dashboard";
 import Alert from "./components/elements/Alert";
-import Home from "./components/Home";
+import HomeOrDashboard from "./components/HomeOrDashboard";
 import Login from "./components/Login";
 import Navbar from "./components/Navbar";
 import AllNotifications from "./components/Notifications/AllNotifications";
@@ -187,6 +189,18 @@ function App() {
                   />
 
                   <PrivateRoute
+                    path="/recommendations"
+                    component={AllRecommendations}
+                    exact={true}
+                  />
+
+                  <PrivateRoute
+                    path="/favorites"
+                    component={AllFavorites}
+                    exact={true}
+                  />
+
+                  <PrivateRoute
                     path="/settings"
                     component={Settings}
                     exact={false}
@@ -215,7 +229,7 @@ function App() {
                   />
 
                   <Route path="/" exact>
-                    <Home />
+                    <HomeOrDashboard />
                   </Route>
                 </Switch>
               </Router>

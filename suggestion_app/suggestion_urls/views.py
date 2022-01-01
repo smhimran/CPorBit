@@ -1,15 +1,14 @@
+import _thread
+
+from problem_app.models import AcceptedSubmission
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-
 from suggestion_app.models import Suggestion
-from problem_app.models import AcceptedSubmission
-from user_app.models import Profile
-from suggestion_app.serializers.SuggestionSerializer import SuggestionSerializer
-
+from suggestion_app.serializers.SuggestionSerializer import \
+    SuggestionSerializer
 from suggestion_app.services.generateSuggestion import generate_new_suggestion
-
-import _thread
+from user_app.models import Profile
 
 
 class SuggestionAV(APIView):
@@ -26,12 +25,12 @@ class SuggestionAV(APIView):
             return Response({
                 'status': 'FAILED',
                 'message': 'Profile not found',
-            })
+            }, status=404)
         if profilenow.is_updating:
             return Response({
                 'status': 'FAILED',
                 'message': 'Updating Suggestion',
-            })
+            }, status=400)
 
         queryset = []
         try:
@@ -59,13 +58,13 @@ class SuggestionAV(APIView):
             return Response({
                 'status': 'FAILED',
                 'message': 'Profile not found',
-            })
+            }, status=404)
             
         if profilenow.is_updating:
             return Response({
                 'status': 'FAILED',
                 'message': 'Update in progress',
-            })
+            }, status=403)
             
         _thread.start_new_thread(generate_new_suggestion, (usernow,))
             
@@ -83,7 +82,7 @@ class SuggestionAV(APIView):
             return Response({
                 'status' : 'FAILED',
                 'message' : 'No problem selected'
-            })
+            }, status=400)
             
         try:
             suggestnow = Suggestion.objects.get(user = usernow, problem__cf_problem_id = problemid)
@@ -92,7 +91,7 @@ class SuggestionAV(APIView):
             return Response({
                 'status' : 'FAILED',
                 'message' : 'Problem not Suggested',
-            })
+            }, status=400)
         
         if AcceptedSubmission.objects.filter(user = usernow, problem = suggestnow.problem).exists():
             suggestnow.delete()        
@@ -104,7 +103,7 @@ class SuggestionAV(APIView):
         return Response({
             'status' : 'FAILED',
             'message' : 'Problem not solved',
-        })
+        }, status=403)
 
 
         
