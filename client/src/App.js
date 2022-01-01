@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import "./App.css";
 import About from "./components/About";
 import ActivateAccount from "./components/ActivateAccount";
+import AllProblems from "./components/AllProblems";
 import Connections from "./components/Connections/Connections";
 import Dashboard from "./components/Dashboard";
 import Alert from "./components/elements/Alert";
@@ -171,6 +172,12 @@ function App() {
                     path="/dashboard"
                     component={Dashboard}
                     exact={false}
+                  />
+
+                  <PrivateRoute
+                    path="/problems"
+                    component={AllProblems}
+                    exact={true}
                   />
 
                   <PrivateRoute
