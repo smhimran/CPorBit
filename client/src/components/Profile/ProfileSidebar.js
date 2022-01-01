@@ -2,6 +2,7 @@ import { Card, Image } from "@material-tailwind/react";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { AlertContext } from "../../contexts/AlertContext";
 import { UserContext } from "../../contexts/UserContext";
 import ProfileConnections from "./ProfileConnections";
 import ProfileScore from "./ProfileScore";
@@ -14,8 +15,28 @@ function ProfileSidebar(props) {
   const { username } = useParams();
 
   const user = useContext(UserContext);
+  const displayAlert = useContext(AlertContext);
 
   const token = localStorage.getItem("auth_token");
+
+  const updateSubmissions = () => {
+    axios
+      .post(
+        "/api/submission/update/",
+        {},
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        }
+      )
+      .then((res) => {
+        displayAlert(`${res.data.message}`, true);
+      })
+      .catch((err) => {
+        displayAlert(`${err.response.data.message}`, false);
+      });
+  };
 
   useEffect(() => {
     axios
@@ -88,6 +109,23 @@ function ProfileSidebar(props) {
             </div>
 
             <ProfileScore />
+
+            {user.isAuthenticated && user.user === username && (
+              <div>
+                <button
+                  className="px-2 py-3 text-gray-200 font-bold bg-indigo-500 rounded-lg w-full"
+                  onClick={updateSubmissions}
+                >
+                  Update Submissions
+                </button>
+                <button
+                  className="mt-2 mb-2 px-2 py-3 text-gray-200 font-bold bg-purple-500 rounded-lg w-full"
+                  onClick={updateSubmissions}
+                >
+                  View Submissions
+                </button>
+              </div>
+            )}
 
             {!(user.isAuthenticated && user.user === username) && (
               <ProfileConnections
