@@ -22,6 +22,7 @@ class ProblemListAV(APIView):
         score_to = request.GET.get('to')
         problem_id = request.GET.get('id')
         problem_name = request.GET.get('name')
+        limit = request.GET.get('limit')
         
         if problem_id is None:
             problem_id = ''
@@ -58,6 +59,13 @@ class ProblemListAV(APIView):
             problemlist.extend(sorted(serializer.data, key=self.get_score, reverse=True))
         else:
             problemlist.extend(serializer.data)
+
+        if limit:
+            try:
+                problemlist = problemlist[:int(limit)]
+            
+            except Exception:
+                return Response({'error': 'Invalid limit'}, status=400)
             
         return Response({
             'status': 'OK',
