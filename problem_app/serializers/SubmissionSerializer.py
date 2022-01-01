@@ -1,8 +1,6 @@
-from problem_app.models import AcceptedSubmission
+from problem_app.models import AcceptedSubmission, Problem
 from rest_framework import serializers
-
-from user_app.models import (User, Profile)
-from problem_app.models import Problem
+from user_app.models import Profile, User
 
 
 class SubmissionSerializer(serializers.ModelSerializer):
@@ -24,9 +22,9 @@ class SubmissionSerializer(serializers.ModelSerializer):
         return res
     
     def get_cf_problem_id(self, object):
-        res = Problem.objects.get(cf_problem_id=object.problem).cf_problem_id
+        res = Problem.objects.get(cf_problem_id=object.problem.cf_problem_id).cf_problem_id
         return res
     
     def get_cf_problem_name(self, object):
-        res = Problem.objects.get(cf_problem_id=object.problem).cf_problem_name
+        res = Problem.objects.get(cf_problem_id=object.problem.cf_problem_id).cf_problem_name
         return res

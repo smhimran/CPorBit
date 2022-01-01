@@ -218,7 +218,7 @@ function App() {
                     exact={false}
                   />
                   <PrivateRoute
-                    path="/submissions"
+                    path="/submissions/:username"
                     component={Submissions}
                     exact={true}
                   />
