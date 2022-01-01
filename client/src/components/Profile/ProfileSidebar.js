@@ -1,7 +1,7 @@
 import { Card, Image } from "@material-tailwind/react";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { AlertContext } from "../../contexts/AlertContext";
 import { UserContext } from "../../contexts/UserContext";
 import ProfileConnections from "./ProfileConnections";
@@ -118,12 +118,17 @@ function ProfileSidebar(props) {
                 >
                   Update Submissions
                 </button>
-                <button
-                  className="mt-2 mb-2 px-2 py-3 text-gray-200 font-bold bg-purple-500 rounded-lg w-full"
-                  onClick={updateSubmissions}
+              </div>
+            )}
+
+            {user.isAuthenticated && (
+              <div>
+                <Link
+                  to={`/submissions/${username}`}
+                  className="block text-center mt-2 mb-3 px-2 py-3 text-gray-200 font-bold bg-purple-500 hover:bg-purple-600 rounded-lg w-full"
                 >
                   View Submissions
-                </button>
+                </Link>
               </div>
             )}
 

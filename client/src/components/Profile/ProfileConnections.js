@@ -58,7 +58,7 @@ function ProfileConnections({ isConnected, username, setIsConnected }) {
   if (isConnected === "CURRENT") {
     return (
       <div className="my-2">
-        <h4 className="text-md text-secondary">
+        <h4 className="text-md mt-5 text-secondary">
           You are connected to this user
         </h4>
       </div>
