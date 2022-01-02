@@ -93,8 +93,8 @@ function RequestsMentee() {
                             >
                               <div className="flex justify-between">
                                 <p className="dark:text-gray-200">
-                                  {request.mentor.firstname}{" "}
-                                  {request.mentor.lastname} (
+                                  {request.mentor.first_name}{" "}
+                                  {request.mentor.last_name} (
                                   {request.mentor.username})
                                 </p>
                                 <span>
