@@ -76,8 +76,8 @@ function Pending() {
                               {request.status === "REQUESTED_FROM_MENTOR" ? (
                                 <span className="flex justify-between">
                                   <p className="dark:text-gray-200">
-                                    {request.mentee.firstname}{" "}
-                                    {request.mentee.lastname} (
+                                    {request.mentee.first_name}{" "}
+                                    {request.mentee.last_name} (
                                     {request.mentee.username})
                                   </p>
 
