@@ -15,6 +15,10 @@ pip install -r requirements.txt
 ```bash
 cp env.example ./.env
 ```
+for windows, use this command instead
+```cmd
+copy env.example .\.env
+```
 
 - Run the server
 
