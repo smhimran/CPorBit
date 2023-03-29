@@ -2,6 +2,8 @@
 
 ## Instructions to run
 
+- Create virtualenv
+
 ### Server
 
 - Install dependencies
