@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger('django')
+
 from django.contrib.auth.models import User
 from notification_app.models import Notification
 from problem_app.services.updateallsubmission import deleteSubmission
@@ -304,3 +307,5 @@ def get_user_info(request, username):
         return Response(data=CurrentUserSerializer(user).data, status=200)
     except User.DoesNotExist:
         return Response(status=404, data={'message': 'User does not exist!'})
+    except Exception as ex:
+        logger.exception(ex)
