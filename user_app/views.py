@@ -25,20 +25,28 @@ class ProfileViewset(viewsets.ModelViewSet):
     allowed_methods = ('GET', 'POST', 'PUT', 'DELETE')
 
     def get_queryset(self):
-        username = self.request.GET.get('username') or self.request.user.username
-        user = User.objects.get(username=username)
-        return  Profile.objects.filter(user=user)
+        try:
+            username = self.request.GET.get('username') or self.request.user.username
+            user = User.objects.get(username=username)
+            return  Profile.objects.filter(user=user)
+        except Exception as ex:
+            logger.exception(ex)
+            return Response(status=500, data={'message': 'Some error occurred while getting data.'})
 
     def update(self, request, *args, **kwargs):
-        profile = self.get_object()
-        serializer = self.get_serializer(profile, data=request.data)
-        serializer.is_valid(raise_exception=True)
+        try:
+            profile = self.get_object()
+            serializer = self.get_serializer(profile, data=request.data)
+            serializer.is_valid(raise_exception=True)
 
-        if serializer.validated_data['cf_handle'] != profile.cf_handle:
-            deleteSubmission(request.user)
+            if serializer.validated_data['cf_handle'] != profile.cf_handle:
+                deleteSubmission(request.user)
 
-        serializer.save()
-        return Response(serializer.data)
+            serializer.save()
+            return Response(serializer.data)
+        except Exception as ex:
+            logger.exception(ex)
+            return Response(status=500, data={'message': 'Some error occurred while updating profile.'})
 
 
 class MenteeViewset(viewsets.ModelViewSet):
@@ -46,14 +54,18 @@ class MenteeViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly, IsMentorOrMenteeOrReadOnly)
 
     def get_queryset(self):
-        username = self.request.GET.get('username') or self.request.user.username
-        user = User.objects.get(username=username)
-        return  Mentee.objects.filter(mentor=user, status='CURRENT')
+        try:
+            username = self.request.GET.get('username') or self.request.user.username
+            user = User.objects.get(username=username)
+            return  Mentee.objects.filter(mentor=user, status='CURRENT')
+        except Exception as ex:
+            logger.exception(ex)
+            return Response(status=500, data={'message': 'Some error occurred while getting data.'})
 
     @action(detail=False, methods=['post'])
     def request_to_be_mentee(self, request):
-        mentee_username = request.data.get('mentee')
         try:
+            mentee_username = request.data.get('mentee')
             mentee = User.objects.get(username=mentee_username)
             user = request.user
 
@@ -91,6 +103,9 @@ class MenteeViewset(viewsets.ModelViewSet):
         
         except User.DoesNotExist:
             return Response(status=404, data={'message': 'User does not exist!'})
+        except Exception as ex:
+            logger.exception(ex)
+            return Response(status=500, data={'message': 'Some error occurred while requesting connections.'})
 
 
     @action(detail=False, methods=['post'])
@@ -133,170 +148,218 @@ class MenteeViewset(viewsets.ModelViewSet):
         
         except User.DoesNotExist:
             return Response(status=404, data={'message': 'User does not exist!'})
+        except Exception as ex:
+            logger.exception(ex)
+            return Response(status=500, data={'message': 'Some error occurred while requesting connections.'})
 
 
 
     @action(detail=False, methods=['get'])
     def get_current_mentor(self, request):
-        username = request.GET.get('username') or request.user.username
-        user = User.objects.get(username=username)
-        mentors = Mentee.objects.filter(mentee=user, status='CURRENT')
-        serialized = MenteeSerializer(mentors, many=True)
-        return Response(data=serialized.data, status=200)
+        try:
+            username = request.GET.get('username') or request.user.username
+            user = User.objects.get(username=username)
+            mentors = Mentee.objects.filter(mentee=user, status='CURRENT')
+            serialized = MenteeSerializer(mentors, many=True)
+            return Response(data=serialized.data, status=200)
+        except Exception as ex:
+            logger.exception(ex)
+            return Response(status=500, data={'message': 'Some error occurred while getting connections.'})
 
 
     @action(detail=False, methods=['get'])
     def get_pending_requests(self, request):
-        if request.user.is_authenticated:
-            mentors = Mentee.objects.filter(mentee=request.user, status='REQUESTED_FROM_MENTEE')
-            mentees = Mentee.objects.filter(mentor=request.user, status='REQUESTED_FROM_MENTOR')
-            pending_list = mentors | mentees
-            serialized = MenteeSerializer(pending_list, many=True)
-            return Response(data=serialized.data, status=200)
-        
-        else:
-            return Response(status=401, data={'message': 'Authentication credentials were not provided.'})
+        try:
+            if request.user.is_authenticated:
+                mentors = Mentee.objects.filter(mentee=request.user, status='REQUESTED_FROM_MENTEE')
+                mentees = Mentee.objects.filter(mentor=request.user, status='REQUESTED_FROM_MENTOR')
+                pending_list = mentors | mentees
+                serialized = MenteeSerializer(pending_list, many=True)
+                return Response(data=serialized.data, status=200)
+            
+            else:
+                return Response(status=401, data={'message': 'Authentication credentials were not provided.'})
+        except Exception as ex:
+            logger.exception(ex)
+            return Response(status=500, data={'message': 'Some error occurred while getting pending connection requests.'})
 
 
     @action(detail=False, methods=['get'])
     def get_requests_to_be_mentor(self, request):
-        if request.user.is_authenticated:
-            mentors = Mentee.objects.filter(mentor=request.user, status='REQUESTED_FROM_MENTEE')
-            serialized = MenteeSerializer(mentors, many=True)
-            return Response(data=serialized.data, status=200)
-        
-        else:
-            return Response(status=401, data={'message': 'Authentication credentials were not provided.'})
+        try:
+            if request.user.is_authenticated:
+                mentors = Mentee.objects.filter(mentor=request.user, status='REQUESTED_FROM_MENTEE')
+                serialized = MenteeSerializer(mentors, many=True)
+                return Response(data=serialized.data, status=200)
+            
+            else:
+                return Response(status=401, data={'message': 'Authentication credentials were not provided.'})
+        except Exception as ex:
+            logger.exception(ex)
+            return Response(status=500, data={'message': 'Some error occurred while getting connection requests.'})
 
     @action(detail=False, methods=['get'])
     def get_requests_to_be_mentee(self, request):
-        if request.user.is_authenticated:
-            mentees = Mentee.objects.filter(mentee=request.user, status='REQUESTED_FROM_MENTOR')
-            serialized = MenteeSerializer(mentees, many=True)
-            return Response(data=serialized.data, status=200)
-        
-        else:
-            return Response(status=401, data={'message': 'Authentication credentials were not provided.'})
+        try:
+            if request.user.is_authenticated:
+                mentees = Mentee.objects.filter(mentee=request.user, status='REQUESTED_FROM_MENTOR')
+                serialized = MenteeSerializer(mentees, many=True)
+                return Response(data=serialized.data, status=200)
+            
+            else:
+                return Response(status=401, data={'message': 'Authentication credentials were not provided.'})
+        except Exception as ex:
+            logger.exception(ex)
+            return Response(status=500, data={'message': 'Some error occurred while getting connection requests.'})
 
 
     @action(detail=False, methods=['get'])
     def get_past_mentors(self, request):
-        if request.user.is_authenticated:
-            mentors = Mentee.objects.filter(mentee=request.user, status='FORMER')
-            serialized = MenteeSerializer(mentors, many=True)
-            return Response(data=serialized.data, status=200)
+        try:
+            if request.user.is_authenticated:
+                mentors = Mentee.objects.filter(mentee=request.user, status='FORMER')
+                serialized = MenteeSerializer(mentors, many=True)
+                return Response(data=serialized.data, status=200)
 
-        else:
-            return Response(status=401, data={'message': 'Authentication credentials were not provided.'})
+            else:
+                return Response(status=401, data={'message': 'Authentication credentials were not provided.'})
+        except Exception as ex:
+            logger.exception(ex)
+            return Response(status=500, data={'message': 'Some error occurred while getting previous mentors.'})
 
     
     @action(detail=False, methods=['get'])
     def get_past_mentees(self, request):
-        if request.user.is_authenticated:
-            mentees = Mentee.objects.filter(mentor=request.user, status='FORMER')
-            serialized = MenteeSerializer(mentees, many=True)
-            return Response(data=serialized.data, status=200)
+        try:
+            if request.user.is_authenticated:
+                mentees = Mentee.objects.filter(mentor=request.user, status='FORMER')
+                serialized = MenteeSerializer(mentees, many=True)
+                return Response(data=serialized.data, status=200)
 
-        else:
-            return Response(status=401, data={'message': 'Authentication credentials were not provided.'})
+            else:
+                return Response(status=401, data={'message': 'Authentication credentials were not provided.'})
+        except Exception as ex:
+            logger.exception(ex)
+            return Response(status=500, data={'message': 'Some error occurred while getting previous mentees.'})
 
 
     @action(detail=False, methods=['put'], url_path='accept_request/(?P<request_id>[^/.]+)')
     def accept_request(self, request, request_id):
-        mentorship_request = Mentee.objects.filter(id=request_id)
-        if mentorship_request[0].status == 'REQUESTED_FROM_MENTOR' and mentorship_request[0].mentee == request.user:
-            notification = Notification.objects.create(user=mentorship_request[0].mentor, notification_type='Request Accepted')
-            notification.save()
-            mentorship_request.update(status='CURRENT')
-        elif mentorship_request[0].status == 'REQUESTED_FROM_MENTEE' and mentorship_request[0].mentor == request.user:
-            notification = Notification.objects.create(user=mentorship_request[0].mentee, notification_type='Request Accepted')
-            notification.save()
-            mentorship_request.update(status='CURRENT')
-        else:
-            return Response(status=403, data={'message': 'You do not have permission to accpet this request!'})
-        return Response(status=200, data={'message': 'Request accepted successfully!'})
+        try:
+            mentorship_request = Mentee.objects.filter(id=request_id)
+            if mentorship_request[0].status == 'REQUESTED_FROM_MENTOR' and mentorship_request[0].mentee == request.user:
+                notification = Notification.objects.create(user=mentorship_request[0].mentor, notification_type='Request Accepted')
+                notification.save()
+                mentorship_request.update(status='CURRENT')
+            elif mentorship_request[0].status == 'REQUESTED_FROM_MENTEE' and mentorship_request[0].mentor == request.user:
+                notification = Notification.objects.create(user=mentorship_request[0].mentee, notification_type='Request Accepted')
+                notification.save()
+                mentorship_request.update(status='CURRENT')
+            else:
+                return Response(status=403, data={'message': 'You do not have permission to accpet this request!'})
+            return Response(status=200, data={'message': 'Request accepted successfully!'})
+        except Exception as ex:
+            logger.exception(ex)
+            return Response(status=500, data={'message': 'Some error occurred while accepting connection request.'})
 
 
     @action(detail=False, methods=['put'], url_path='reject_request/(?P<request_id>[^/.]+)')
     def reject_request(self, request, request_id):
-        mentorship_request = Mentee.objects.filter(id=request_id)
-        if mentorship_request[0].status == 'REQUESTED_FROM_MENTOR' and mentorship_request[0].mentee == request.user:
-            notification = Notification.objects.create(user=mentorship_request[0].mentor, notification_type='Request Rejected')
-            notification.save()
-            mentorship_request.delete()
-        elif mentorship_request[0].status == 'REQUESTED_FROM_MENTEE' and mentorship_request[0].mentor == request.user:
-            notification = Notification.objects.create(user=mentorship_request[0].mentee, notification_type='Request Rejected')
-            notification.save()
-            mentorship_request.delete()
-        else:
-            return Response(status=403, data={'message': 'You do not have permission to reject this request!'})
-        return Response(status=200, data={'message': 'Request rejected successfully!'})
+        try:
+            mentorship_request = Mentee.objects.filter(id=request_id)
+            if mentorship_request[0].status == 'REQUESTED_FROM_MENTOR' and mentorship_request[0].mentee == request.user:
+                notification = Notification.objects.create(user=mentorship_request[0].mentor, notification_type='Request Rejected')
+                notification.save()
+                mentorship_request.delete()
+            elif mentorship_request[0].status == 'REQUESTED_FROM_MENTEE' and mentorship_request[0].mentor == request.user:
+                notification = Notification.objects.create(user=mentorship_request[0].mentee, notification_type='Request Rejected')
+                notification.save()
+                mentorship_request.delete()
+            else:
+                return Response(status=403, data={'message': 'You do not have permission to reject this request!'})
+            return Response(status=200, data={'message': 'Request rejected successfully!'})
+        except Exception as ex:
+            logger.exception(ex)
+            return Response(status=500, data={'message': 'Some error occurred while rejecting connection request.'})
 
 
     @action(detail=False, methods=['get'])
     def is_connection_or_requested(self, request):
-        if request.user.is_authenticated:
-            username = request.GET.get('username')
-            try:
-                user = User.objects.get(username=username)
+        try:
+            if request.user.is_authenticated:
+                username = request.GET.get('username')
+                try:
+                    user = User.objects.get(username=username)
 
-                request_list = Mentee.objects.filter(mentee=request.user, mentor=user) | Mentee.objects.filter(mentor=request.user, mentee=user)
+                    request_list = Mentee.objects.filter(mentee=request.user, mentor=user) | Mentee.objects.filter(mentor=request.user, mentee=user)
 
-                if request_list:
-                    return Response(status=200, data={'status': request_list[0].status})
-                else:
-                    return Response(status=200, data={'status': 'NOT_CONNECTED'})
+                    if request_list:
+                        return Response(status=200, data={'status': request_list[0].status})
+                    else:
+                        return Response(status=200, data={'status': 'NOT_CONNECTED'})
+                
+                except User.DoesNotExist:
+                    return Response(status=404, data={'message': 'User does not exist!'})
             
-            except User.DoesNotExist:
-                return Response(status=404, data={'message': 'User does not exist!'})
-        
-        else:
-            return Response(status=401, data={'message': 'Authentication credentials were not provided.'})
+            else:
+                return Response(status=401, data={'message': 'Authentication credentials were not provided.'})
+        except Exception as ex:
+            logger.exception(ex)
+            return Response(status=500, data={'message': 'Some error occurred while checking connection.'})
+
 
 
     @action(detail=False, methods=['post'])
     def close_connection(self, request):
-        if request.user.is_authenticated:
-            username = request.data.get('username')
-            try:
-                user = User.objects.get(username=username)
-                mentorships = Mentee.objects.filter(mentor=request.user, mentee=user, status='CURRENT') | Mentee.objects.filter(mentee=request.user, mentor=user, status='CURRENT')
+        try:
+            if request.user.is_authenticated:
+                username = request.data.get('username')
+                try:
+                    user = User.objects.get(username=username)
+                    mentorships = Mentee.objects.filter(mentor=request.user, mentee=user, status='CURRENT') | Mentee.objects.filter(mentee=request.user, mentor=user, status='CURRENT')
 
-                if mentorships:
-                    mentorships[0].status = 'FORMER'
-                    mentorships[0].save()
-                    return Response(status=200, data={'message': 'Connection closed successfully!'})
-                
-                else:
-                    return Response(status=403, data={'message': 'Request failed!'})
-                
-            except User.DoesNotExist:
-                return Response(status=404, data={'message': 'User does not exist!'})
+                    if mentorships:
+                        mentorships[0].status = 'FORMER'
+                        mentorships[0].save()
+                        return Response(status=200, data={'message': 'Connection closed successfully!'})
+                    
+                    else:
+                        return Response(status=403, data={'message': 'Request failed!'})
+                    
+                except User.DoesNotExist:
+                    return Response(status=404, data={'message': 'User does not exist!'})
 
-        else:
-            return Response(status=401, data={'message': 'Authentication credentials were not provided.'})
+            else:
+                return Response(status=401, data={'message': 'Authentication credentials were not provided.'})
+        except Exception as ex:
+            logger.exception(ex)
+            return Response(status=500, data={'message': 'Some error occurred while closing connection.'})
 
     
     @action(detail=False, methods=['post'], url_path='cancel_pending_request/(?P<request_id>[^/.]+)')
     def cancel_pending_request(self, request, request_id):
-        if request.user.is_authenticated:
-            
-            mentorships = Mentee.objects.filter(id=request_id)
+        try:
+            if request.user.is_authenticated:
+                
+                mentorships = Mentee.objects.filter(id=request_id)
 
-            if mentorships[0].mentee == request.user and mentorships[0].status == 'REQUESTED_FROM_MENTEE':
-                mentorships[0].delete()
-                return Response(status=200, data={'message': 'Request cancelled successfully!'})
-            
-            elif mentorships[0].mentor == request.user and mentorships[0].status == 'REQUESTED_FROM_MENTOR':
-                mentorships[0].delete()
-                return Response(status=200, data={'message': 'Request cancelled successfully!'})
-            
+                if mentorships[0].mentee == request.user and mentorships[0].status == 'REQUESTED_FROM_MENTEE':
+                    mentorships[0].delete()
+                    return Response(status=200, data={'message': 'Request cancelled successfully!'})
+                
+                elif mentorships[0].mentor == request.user and mentorships[0].status == 'REQUESTED_FROM_MENTOR':
+                    mentorships[0].delete()
+                    return Response(status=200, data={'message': 'Request cancelled successfully!'})
+                
+                else:
+                    return Response(status=403, data={'message': 'Request failed!'})
+
+
             else:
-                return Response(status=403, data={'message': 'Request failed!'})
-
-
-        else:
-            return Response(status=401, data={'message': 'Authentication credentials were not provided.'})
+                return Response(status=401, data={'message': 'Authentication credentials were not provided.'})
+        except Exception as ex:
+            logger.exception(ex)
+            return Response(status=500, data={'message': 'Some error occurred while cancelling pending request.'})
 
 
 @api_view(['GET'])
@@ -309,3 +372,4 @@ def get_user_info(request, username):
         return Response(status=404, data={'message': 'User does not exist!'})
     except Exception as ex:
         logger.exception(ex)
+        return Response(status=500, data={'message': 'Some error occurred while getting user info.'})
