@@ -1,0 +1,47 @@
+version: "3.8"
+services:
+  proxy:
+    image: nginx:alpine
+    container_name: proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./public/staticfiles:/staticfiles
+    restart: "unless-stopped"
+    depends_on:
+      - server
+      - client
+    networks:
+      - myNet
+
+  server:
+    build: .
+    container_name: server_c
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - /app/venv
+    networks:
+      - myNet
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+
+    container_name: client_c
+
+    volumes:
+      - ./client:/app/client
+      - /app/client/node_modules
+    restart: "unless-stopped"
+    depends_on:
+      - server
+    networks:
+      - myNet
+
+networks:
+  myNet:
+    driver: bridge
