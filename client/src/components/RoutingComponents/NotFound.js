@@ -25,6 +25,9 @@ function NotFound() {
                     </Link>
                 </div>
             </div>
+            <footer className="mt-auto text-center py-4 text-gray-600 text-xs">
+                Image credit © <a href="https://dribbble.com/eaxgor" className="underline">Eaxgor</a>
+            </footer>
         </div>
     )
 }
