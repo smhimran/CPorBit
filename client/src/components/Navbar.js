@@ -41,6 +41,7 @@ function Navbar() {
       "/password-reset",
       "/activate",
       "/password/reset/confirm/:uid/:token",
+      "/not-found",
     ];
 
     setHide(false);
