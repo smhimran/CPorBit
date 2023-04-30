@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger('django')
+
 from re import sub
 
 from django.contrib.auth.models import User
@@ -37,6 +40,9 @@ def get_user_score(request,username):
     
     except User.DoesNotExist:
         return Response({'message': 'User not found'} ,status=404)
+    except Exception as ex:
+        logger.exception(ex)
+        return Response(status=500, data={'message': 'Some error occurred while getting user score.'})
     
 
 @api_view(['GET'])
@@ -73,6 +79,9 @@ def get_user_stats(request, username):
     
     except User.DoesNotExist:
         return Response({'message': 'User not found'} ,status=404)
+    except Exception as ex:
+        logger.exception(ex)
+        return Response(status=500, data={'message': 'Some error occurred while getting user stats.'})
 
 
 @api_view(['GET'])
@@ -85,6 +94,9 @@ def get_user_strength(request, username):
         return Response(strengths[:5], status=200)
     except User.DoesNotExist:
         return Response({"message": "User not found"}, status=404)
+    except Exception as ex:
+        logger.exception(ex)
+        return Response(status=500, data={'message': 'Some error occurred while getting user strength.'})
 
 
 @api_view(['GET'])
@@ -97,6 +109,9 @@ def get_user_weakness(request, username):
         return Response(weaknesses[-5:], status=200)
     except User.DoesNotExist:
         return Response({"message": "User not found"}, status=404)
+    except Exception as ex:
+        logger.exception(ex)
+        return Response(status=500, data={'message': 'Some error occurred while getting user weakness.'})
 
 
 @api_view(['GET'])
@@ -117,3 +132,6 @@ def get_hardest_problem_solved(request, username):
         return Response(problem, status=200)
     except User.DoesNotExist:
         return Response({"message": "User not found"}, status=404)
+    except Exception as ex:
+        logger.exception(ex)
+        return Response(status=500, data={'message': 'Some error occurred while getting user hardest solved problem.'})

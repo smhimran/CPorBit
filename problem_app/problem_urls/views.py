@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger('django')
+
 from problem_app.models import AcceptedSubmission, Problem
 from problem_app.serializers.ProblemSerializer import (ProblemListSerializer,
                                                        ProblemSerializer)
@@ -16,61 +19,66 @@ class ProblemListAV(APIView):
         return problem.get('score')
     
     def get(self, request):
-        orderby = request.GET.get('order')
-        tag = request.GET.get('tag')
-        score_from = request.GET.get('from')
-        score_to = request.GET.get('to')
-        problem_id = request.GET.get('id')
-        problem_name = request.GET.get('name')
-        limit = request.GET.get('limit')
-        
-        if problem_id is None:
-            problem_id = ''
-        if problem_name is None:
-            problem_name = ''
-        
         try:
-            score_min = int(score_from)
-        except:
-            score_min = 0
-        try:
-            score_max = int(score_to)
-        except:
-            score_max = 4000
-        
-        queryset = []
-        
-        if tag:
-            queryset = Problem.objects.filter(cf_problem_id__contains = problem_id, cf_problem_name__contains = problem_name, tag__name=tag, score__range=(score_min, score_max))
-        else:
-            queryset = Problem.objects.filter(cf_problem_id__contains = problem_id, cf_problem_name__contains = problem_name, score__range=(score_min, score_max))
-        
-        serializer = ProblemListSerializer(queryset, many = True, context={'username': request.user.username})
-        
-        problemlist = []
-        
-        if orderby == 'SOLVED_ASC':
-            problemlist.extend(sorted(serializer.data, key=self.get_total_solved))
-        elif orderby == 'SOLVED_DESC':
-            problemlist.extend(sorted(serializer.data, key=self.get_total_solved, reverse=True))
-        elif orderby == 'SCORE_ASC':
-            problemlist.extend(sorted(serializer.data, key=self.get_score))
-        elif orderby == 'SCORE_DESC':
-            problemlist.extend(sorted(serializer.data, key=self.get_score, reverse=True))
-        else:
-            problemlist.extend(serializer.data)
-
-        if limit:
+            orderby = request.GET.get('order')
+            tag = request.GET.get('tag')
+            score_from = request.GET.get('from')
+            score_to = request.GET.get('to')
+            problem_id = request.GET.get('id')
+            problem_name = request.GET.get('name')
+            limit = request.GET.get('limit')
+            
+            if problem_id is None:
+                problem_id = ''
+            if problem_name is None:
+                problem_name = ''
+            
             try:
-                problemlist = problemlist[:int(limit)]
+                score_min = int(score_from)
+            except:
+                score_min = 0
+            try:
+                score_max = int(score_to)
+            except:
+                score_max = 4000
             
-            except Exception:
-                return Response({'error': 'Invalid limit'}, status=400)
+            queryset = []
             
-        return Response({
-            'status': 'OK',
-            'problems': problemlist
-        })
+            if tag:
+                queryset = Problem.objects.filter(cf_problem_id__contains = problem_id, cf_problem_name__contains = problem_name, tag__name=tag, score__range=(score_min, score_max))
+            else:
+                queryset = Problem.objects.filter(cf_problem_id__contains = problem_id, cf_problem_name__contains = problem_name, score__range=(score_min, score_max))
+            
+            serializer = ProblemListSerializer(queryset, many = True, context={'username': request.user.username})
+            
+            problemlist = []
+            
+            if orderby == 'SOLVED_ASC':
+                problemlist.extend(sorted(serializer.data, key=self.get_total_solved))
+            elif orderby == 'SOLVED_DESC':
+                problemlist.extend(sorted(serializer.data, key=self.get_total_solved, reverse=True))
+            elif orderby == 'SCORE_ASC':
+                problemlist.extend(sorted(serializer.data, key=self.get_score))
+            elif orderby == 'SCORE_DESC':
+                problemlist.extend(sorted(serializer.data, key=self.get_score, reverse=True))
+            else:
+                problemlist.extend(serializer.data)
+
+            if limit:
+                try:
+                    problemlist = problemlist[:int(limit)]
+                
+                except Exception as ex:
+                    logger.exception(ex)
+                    return Response({'error': 'Invalid limit'}, status=400)
+                
+            return Response({
+                'status': 'OK',
+                'problems': problemlist
+            })
+        except Exception as ex:
+            logger.exception(ex)
+            return Response(status=500, data={'message': 'Some error occurred while getting problem list.'})
         
         
 class ProblemAV(APIView):
@@ -78,16 +86,19 @@ class ProblemAV(APIView):
     
     def get(self, request, cf_problem_id):
         try:
-            queryset = Problem.objects.get(cf_problem_id = cf_problem_id)
-        except Exception as e:
-            print(e)
-            print('Problem not found')
+            try:
+                queryset = Problem.objects.get(cf_problem_id = cf_problem_id)
+            except Exception as ex:
+                logger.exception(ex)
+                return Response({
+                    'status': 'FAILED',
+                    'message': 'Problem not found'
+                }, status=404)
+            serializer = ProblemSerializer(queryset, context={'username': request.user.username})
             return Response({
-                'status': 'FAILED',
-                'message': 'Problem not found'
-            }, status=404)
-        serializer = ProblemSerializer(queryset, context={'username': request.user.username})
-        return Response({
-            'status': 'OK',
-            'problem': serializer.data
-        })
+                'status': 'OK',
+                'problem': serializer.data
+            })
+        except Exception as ex:
+            logger.exception(ex)
+            return Response(status=500, data={'message': 'Some error occurred while getting problem.'})

@@ -193,8 +193,8 @@ LOGGING = {
     'version': 1,
     'loggers': {
         'django': {
-            'handlers': ['file'],
-            'level': 'ERROR',
+            'handlers': ['file', 'fileinfo'],
+            'level': 'DEBUG',
             'propagate': True,
         },
     },
@@ -203,6 +203,12 @@ LOGGING = {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
             'filename': './logs/Errors.log',
+            'formatter': 'detailed',
+        },
+        'fileinfo': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': './logs/Infos.log',
             'formatter': 'detailed',
         },
     },

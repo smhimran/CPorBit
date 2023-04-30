@@ -31,7 +31,7 @@ class ProfileViewset(viewsets.ModelViewSet):
             return  Profile.objects.filter(user=user)
         except Exception as ex:
             logger.exception(ex)
-            return Response(status=500, data={'message': 'Some error occurred while getting data.'})
+            return Response(status=500, data={'message': 'Some error occurred while getting profile data.'})
 
     def update(self, request, *args, **kwargs):
         try:
@@ -300,7 +300,9 @@ class MenteeViewset(viewsets.ModelViewSet):
                 
                 except User.DoesNotExist:
                     return Response(status=404, data={'message': 'User does not exist!'})
-            
+                except Exception as ex:
+                    logger.exception(ex)
+                    return Response(status=500, data={'message': 'Some error occurred while checking connection.'})
             else:
                 return Response(status=401, data={'message': 'Authentication credentials were not provided.'})
         except Exception as ex:
@@ -328,6 +330,9 @@ class MenteeViewset(viewsets.ModelViewSet):
                     
                 except User.DoesNotExist:
                     return Response(status=404, data={'message': 'User does not exist!'})
+                except Exception as ex:
+                    logger.exception(ex)
+                    return Response(status=500, data={'message': 'Some error occurred while closing connection.'})
 
             else:
                 return Response(status=401, data={'message': 'Authentication credentials were not provided.'})
