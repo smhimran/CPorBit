@@ -66,29 +66,37 @@ class UpdateSubmissionAV(APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
-        usernow = request.user
-        
         try:
-            profilenow = Profile.objects.get(user = usernow)
-        except:
+            usernow = request.user
+            
+            try:
+                profilenow = Profile.objects.get(user = usernow)
+            except Exception as ex:
+                logger.exception(ex)
+                return Response({
+                    'status' : 'FAILED',
+                    'message': 'profile not found',
+                }, status=404)
+            if profilenow.is_updating == True:
+                return Response({
+                    'status' : 'FAILED',
+                    'message': 'update in progress',
+                }, status=400)
+            if not profilenow.cf_handle:
+                return Response({
+                    'status' : 'FAILED',
+                    'message': 'no codeforces handle found',
+                }, status=404)
+            
+            _thread.start_new_thread(updateSubmission, (usernow,))
+            
+            return Response(dict({
+                'status' : 'OK',
+                'message': 'updating submissions',
+            }))
+        except Exception as ex:
+            logger.exception(ex)
             return Response({
-                'status' : 'FAILED',
-                'message': 'profile not found',
-            }, status=404)
-        if profilenow.is_updating == True:
-            return Response({
-                'status' : 'FAILED',
-                'message': 'update in progress',
-            }, status=400)
-        if not profilenow.cf_handle:
-            return Response({
-                'status' : 'FAILED',
-                'message': 'no codeforces handle found',
-            }, status=404)
-        
-        _thread.start_new_thread(updateSubmission, (usernow,))
-        
-        return Response(dict({
-            'status' : 'OK',
-            'message': 'updating submissions',
-        }))
+                    'status' : 'FAILED',
+                    'message': 'An Error Occurred while updating submission',
+                }, status=500)
