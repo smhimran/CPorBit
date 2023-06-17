@@ -184,7 +184,6 @@ def deleteSubmission(user):
         profilenow.is_updating = False
         profilenow.save()
         
-        print('Successfully Deleted all submission for user ' + user.username)
         logger.info('Successfully Deleted all submission for user ' + user.username)
         
         return dict({

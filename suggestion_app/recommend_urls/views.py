@@ -57,7 +57,7 @@ class RecommendationAV(APIView):
                 
             try:
                 recnow = Recommendation.objects.get(user = usernow, problem__cf_problem_id = problemid)
-            except Exception as e:
+            except Exception as ex:
                 logger.exception(ex)
                 return Response({
                     'status' : 'FAILED',
@@ -206,8 +206,8 @@ class RecommendAV(APIView):
             
             try:
                 mentee = User.objects.get(username=username)
-            except Exception as e:
-                print(e)
+            except Exception as ex:
+                logger.exception(ex)
                 return Response({
                     'status': 'FAILED',
                     'message' : 'Mentee Not Found',
@@ -229,8 +229,8 @@ class RecommendAV(APIView):
                 
             try:
                 recnow = Recommendation.objects.get(user = mentee, problem__cf_problem_id = problemid)
-            except Exception as e:
-                print(e)
+            except Exception as ex:
+                logger.exception(ex)
                 return Response({
                     'status' : 'FAILED',
                     'message' : 'Problem not found',

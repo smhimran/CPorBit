@@ -97,8 +97,8 @@ class FavoriteAV(APIView):
                 
             try:
                 favnow = Favorite.objects.get(user = usernow, problem__cf_problem_id = problemid)
-            except Exception as e:
-                print(e)
+            except Exception as ex:
+                logger.exception(ex)
                 return Response({
                     'status' : 'FAILED',
                     'message' : 'Problem not found',

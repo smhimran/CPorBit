@@ -13,7 +13,7 @@ def addTag(tags):
             try:
                 new_tag = Tag(name = tag_name)
                 new_tag.save()
-                print('new tag added ' + tag_name)
+                logger.info('new tag added ' + tag_name)
             except Exception as ex:
                 logger.exception(ex)
                 return False
