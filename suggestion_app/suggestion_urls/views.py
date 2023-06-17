@@ -40,7 +40,7 @@ class SuggestionAV(APIView):
             try:
                 cnt = int(limit)
                 queryset = Suggestion.objects.filter(user=usernow)[:cnt]
-            except Exception as e:
+            except Exception as ex:
                 logger.exception(ex)
                 queryset = Suggestion.objects.filter(user=usernow)
                 
@@ -105,7 +105,7 @@ class SuggestionAV(APIView):
                 
             try:
                 suggestnow = Suggestion.objects.get(user = usernow, problem__cf_problem_id = problemid)
-            except Exception as e:
+            except Exception as ex:
                 logger.exception(ex)
                 return Response({
                     'status' : 'FAILED',
