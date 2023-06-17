@@ -162,8 +162,11 @@ public_root = root.path('public/')
 MEDIA_ROOT = public_root('media')
 MEDIA_URL = env.str('MEDIA_URL', default='media/')
 
-STATIC_ROOT = public_root('static')
-STATIC_URL = env.str('STATIC_URL', default='static/')
+STATIC_ROOT = public_root('staticfiles')
+STATICFILES_DIRS = [
+    BASE_DIR / "staticfiles",  # Django will search for /static/
+]
+STATIC_URL = env.str('STATIC_URL', default='staticfiles/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

@@ -41,6 +41,7 @@ function Navbar() {
       "/password-reset",
       "/activate",
       "/password/reset/confirm/:uid/:token",
+      "/not-found",
     ];
 
     setHide(false);
@@ -309,7 +310,7 @@ function Navbar() {
                           >
                             <div className="w-8 h-8 overflow-hidden border-2 border-gray-400 rounded-full">
                               <img
-                                src={user.avatar}
+                                src={user.avatar || "https://i.ibb.co/3FpLmv3/man.png"}
                                 className="object-cover w-full h-full"
                                 alt="avatar"
                               />
@@ -335,7 +336,7 @@ function Navbar() {
                               >
                                 <img
                                   className="flex-shrink-0 object-cover mx-1 rounded-full w-9 h-9"
-                                  src={user.avatar}
+                                  src={user.avatar || "https://i.ibb.co/3FpLmv3/man.png"}
                                   alt="default avatar"
                                 />
                                 <div className="mx-1">

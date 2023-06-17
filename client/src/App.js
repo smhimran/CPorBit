@@ -1,7 +1,7 @@
 import "@material-tailwind/react/tailwind.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import "./App.css";
 import About from "./components/About";
 import ActivateAccount from "./components/ActivateAccount";
@@ -28,6 +28,7 @@ import Suggestions from "./components/Suggestions";
 import { AlertContext } from "./contexts/AlertContext";
 import { ThemeContext } from "./contexts/ThemeContext";
 import { UserContext } from "./contexts/UserContext";
+import NotFound from "./components/RoutingComponents/NotFound";
 
 function App() {
   // Auth states
@@ -230,6 +231,14 @@ function App() {
 
                   <Route path="/" exact>
                     <HomeOrDashboard />
+                  </Route>
+
+                  <Route path="/not-found" exact>
+                    <NotFound />
+                  </Route>
+
+                  <Route path="*">
+                    <Redirect to="/not-found" />
                   </Route>
                 </Switch>
               </Router>
