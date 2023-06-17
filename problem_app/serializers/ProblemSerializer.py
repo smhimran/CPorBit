@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger('django')
+
 from rest_framework import serializers
 
 from user_app.models import (User)
@@ -17,16 +20,16 @@ class ProblemListSerializer(serializers.ModelSerializer):
     def get_is_solved(self, object):
         try:
             user = User.objects.get(username = self.context.get('username'))
-        except Exception as e:
-            print(e)
+        except Exception as ex:
+            logger.exception(ex)
             return False
         return AcceptedSubmission.objects.filter(problem = object, user = user).exists()
     
     def get_total_solved(self, object):
         try:
             problem = Problem.objects.get(cf_problem_id = object.cf_problem_id)
-        except Exception as e:
-            print(e)
+        except Exception as ex:
+            logger.exception(ex)
             return 0
         return AcceptedSubmission.objects.filter(problem=problem).count()
     
@@ -54,8 +57,8 @@ class ProblemSerializer(serializers.ModelSerializer):
     def get_is_favourite(self, object):
         try:
             user = User.objects.get(username = self.context.get('username'))
-        except Exception as e:
-            print(e)
+        except Exception as ex:
+            logger.exception(ex)
             return False
         return Favorite.objects.filter(user = user, problem = object).exists()
     
@@ -66,7 +69,7 @@ class ProblemSerializer(serializers.ModelSerializer):
     def get_is_recommended(self, object):
         try:
             user = User.objects.get(username = self.context.get('username'))
-        except Exception as e:
-            print(e)
+        except Exception as ex:
+            logger.exception(ex)
             return False
         return Recommendation.objects.filter(user = user, problem = object).exists()
