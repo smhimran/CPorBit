@@ -1,9 +1,12 @@
 import requests
 import random
+import numpy as np
+
 
 from datetime import datetime
 from django.utils.timezone import make_aware
 from django.db.models import Avg
+from sklearn.neighbors import NearestNeighbors
 
 from user_app.models import Profile
 from problem_app.models import (AcceptedSubmission, Problem)
@@ -19,17 +22,36 @@ def delete_suggestion(user):
 
 
 def filter_suggestions(problems, rating):
-    pqlist = []
+    problem_data = []
+    problem_map = []
+
     for problem in problems:
-        avgrating = int(AcceptedSubmission.objects.filter(problem = problem).aggregate(Avg('current_rating'))['current_rating__avg'])
+        avg_rating = AcceptedSubmission.objects.filter(problem=problem).aggregate(Avg('current_rating'))[
+                         'current_rating__avg'] or 1000
         score = problem.score
-        pqlist.append({
-            'problem': problem,
-            'number': abs(rating - avgrating) + abs(rating - score)
-        })
-    finalproblems = sorted(pqlist, key = lambda x: x['number'])[:100]
-    random.shuffle(finalproblems)
-    return finalproblems[:50]
+        problem_data.append([score, avg_rating])
+        problem_map.append(problem)
+
+    if not problem_data:
+        print("No problems found for KNN filtering.")
+        return []
+
+    # Convert to numpy array for KNN
+    problem_data = np.array(problem_data)
+
+    # KNN model
+    knn = NearestNeighbors(n_neighbors=min(100, len(problem_data)), algorithm='auto')
+    knn.fit(problem_data)
+
+    # Use user's rating as the query point
+    _, indices = knn.kneighbors([[rating, rating]])
+
+    # Retrieve top problems
+    top_problems = [problem_map[idx] for idx in indices[0]]
+
+    # Shuffle and return top 50
+    random.shuffle(top_problems)
+    return [{'problem': problem} for problem in top_problems[:10]]
 
 
 def generate_new_suggestion(user):
@@ -64,13 +86,13 @@ def generate_new_suggestion(user):
     problems = filter_suggestions(queryset, rating)
     
     for problem in problems:
-        sugnow = Suggestion(
+        suggestion = Suggestion(
             user=user,
             problem=problem['problem'],
             timestamp= make_aware(datetime.now())
         )
         try:
-            sugnow.save()
+            suggestion.save()
         except Exception as e:
             print(e)
     
