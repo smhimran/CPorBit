@@ -59,6 +59,9 @@ INSTALLED_APPS = [
 
     # Authentication
     'djoser',
+
+    # Websocket
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -90,6 +93,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'CPorBit.wsgi.application'
+ASGI_APPLICATION = 'CPorBit.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('redis', 6379)],
+        },
+    },
+}
 
 # Rest framework
 REST_FRAMEWORK = {
