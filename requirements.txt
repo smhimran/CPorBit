@@ -31,3 +31,5 @@ uritemplate==3.0.1
 urllib3==1.26.6
 scikit_learn
 numpy
+channels
+channels-redis

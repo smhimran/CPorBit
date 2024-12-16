@@ -1,4 +1,5 @@
 version: "3.8"
+
 services:
   proxy:
     image: nginx:alpine
@@ -23,6 +24,11 @@ services:
     volumes:
       - .:/app
       - /app/venv
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
     networks:
       - myNet
 
@@ -30,15 +36,21 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
-
     container_name: client_c
-
     volumes:
       - ./client:/app/client
       - /app/client/node_modules
     restart: "unless-stopped"
     depends_on:
       - server
+    networks:
+      - myNet
+
+  redis:
+    image: redis:alpine
+    container_name: redis_c
+    ports:
+      - "6379:6379"
     networks:
       - myNet
 
