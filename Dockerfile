@@ -12,7 +12,9 @@ RUN apk add --no-cache \
     libffi-dev \
     musl-dev \
     make \
-    openblas-dev
+    openblas-dev \
+    bash \
+    dos2unix
 
 ENV BLAS=OPENBLAS \
     LAPACK=OPENBLAS
@@ -22,9 +24,17 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-RUN chmod +x ./server.sh
+COPY server.sh /app/server.sh
 
-RUN ./server.sh
+# Fix Windows line endings and make the script executable
+RUN dos2unix /app/server.sh
+RUN chmod +x /app/server.sh
+
+# Create staticfiles directory
+RUN mkdir -p /app/staticfiles
+
+# Run the script
+RUN /bin/bash /app/server.sh
 
 EXPOSE 8000
 

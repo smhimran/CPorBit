@@ -28,7 +28,15 @@ class ProfileViewset(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         profile = self.get_object()
-        serializer = self.get_serializer(profile, data=request.data)
+
+        data = request.data.copy()  # Copy the data to manipulate safely
+
+        # Convert empty or "null" strings for avatar to None
+        if data.get('avatar') in ['', 'null']:
+            data['avatar'] = None
+
+        serializer = self.get_serializer(profile, data=data, partial = True)
+        print(request.data)
         serializer.is_valid(raise_exception=True)
 
         if serializer.validated_data['cf_handle'] != profile.cf_handle:

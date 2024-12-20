@@ -7,7 +7,10 @@ import { UserContext } from "../../contexts/UserContext";
 
 function ProfileSettings() {
   // States
-  const [profile, setProfile] = useState({});
+  const [profile, setProfile] = useState({
+    avatar: undefined,
+    university: null,
+  });
   const [isLoading, setIsLoading] = useState(false);
 
   const [image, setImage] = useState("https://i.ibb.co/3FpLmv3/man.png");

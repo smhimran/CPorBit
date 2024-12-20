@@ -50,7 +50,7 @@ function AllProblems() {
   }, []);
 
   return (
-    <div className="dark:bg-gray-800 py-4">
+    <div className="dark:bg-gray-800 py-4 min-h-screen h-full">
       <div className="container px-6 mx-auto">
         <h1 className="text-3xl text-gray-800 dark:text-gray-200 text-center font-bold">
           Problems

@@ -7,3 +7,7 @@ class ProfileSerializer(ModelSerializer):
     class Meta:
         model = Profile
         fields = '__all__'
+        extra_kwargs = {
+            'avatar': {'required': False, 'allow_null': True},
+            'university': {'required': False, 'allow_null': True},
+        }
