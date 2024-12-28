@@ -30,7 +30,7 @@ function NotificationListItem({ id, notification_type, is_read, index }) {
         }  dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-gray-600 my-2`}
         onClick={() => markAsRead(id)}
       >
-        <Link to="/connections">
+        <Link to="/connections/requests">
           <div className="flex items-center">
             You have a new mentorship request
           </div>
