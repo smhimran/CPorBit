@@ -205,12 +205,14 @@ SITE_NAME = env.str('SITE_NAME')
 
 import os
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 LOGGING = {
     'version': 1,
     'loggers': {
         'django': {
             'handlers': ['file', 'fileinfo'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': True,
         },
     },
@@ -218,13 +220,13 @@ LOGGING = {
         'file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': './logs/Errors.log',
+            'filename': os.path.join(BASE_DIR, 'logs', 'Errors.log'),
             'formatter': 'detailed',
         },
         'fileinfo': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': './logs/Infos.log',
+            'filename': os.path.join(BASE_DIR, 'logs', 'Infos.log'),
             'formatter': 'detailed',
         },
     },

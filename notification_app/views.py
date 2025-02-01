@@ -1,5 +1,5 @@
 import logging
-logger = logging.getLogger('django')
+logger = logging.getLogger(__name__)
 
 from django.shortcuts import render
 from rest_framework import viewsets
