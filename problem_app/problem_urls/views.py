@@ -1,5 +1,5 @@
 import logging
-logger = logging.getLogger('django')
+logger = logging.getLogger(__name__)
 
 from problem_app.models import AcceptedSubmission, Problem
 from problem_app.serializers.ProblemSerializer import (ProblemListSerializer,
