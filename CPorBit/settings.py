@@ -200,3 +200,40 @@ DEFAULT_FROM_EMAIL = env.str('DEFAULT_FROM_EMAIL')
 ## Frontend domain (used for mails)
 DOMAIN = env.str('DOMAIN')
 SITE_NAME = env.str('SITE_NAME')
+
+# logger configuration
+
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+LOGGING = {
+    'version': 1,
+    'loggers': {
+        'django': {
+            'handlers': ['file', 'fileinfo'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'Errors.log'),
+            'formatter': 'detailed',
+        },
+        'fileinfo': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'Infos.log'),
+            'formatter': 'detailed',
+        },
+    },
+    'formatters': {
+        'detailed': {
+            'format': '\n{levelname} {asctime} {message}',
+            'style': '{',
+        },
+    }
+}
